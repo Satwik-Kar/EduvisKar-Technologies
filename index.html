@@ -6,6 +6,11 @@
     <title>EduvisKar Technologies</title>
     <meta name="description" content="Central Hub for EduvisKar Technologies products and services.">
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/img/eduviskar_logo_64x64.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="assets/img/eduviskar_logo_64x64.png">
+    
     <!-- Google Fonts: Roboto -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,42 +55,8 @@
 </head>
 <body class="bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary font-sans antialiased transition-colors duration-300">
     
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 bg-google-bgLight dark:bg-google-bgDark border-b border-google-borderLight dark:border-google-borderDark transition-colors duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo Area -->
-                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer">
-                    <img src="assets/img/eduviskar_logo_64x64.png" class="w-8 h-8 object-contain" alt="EduvisKar Logo">
-                    <span class="font-medium text-xl tracking-tight text-google-textLightPrimary dark:text-google-textDarkPrimary">
-                        EduvisKar Technologies
-                    </span>
-                </div>
-
-                <!-- Right Actions -->
-                <div class="flex items-center space-x-6">
-                    <a href="#products" class="hidden sm:block text-sm font-medium text-google-textLightSecondary dark:text-google-textDarkSecondary hover:text-google-textLightPrimary dark:hover:text-google-textDarkPrimary transition-colors">Products</a>
-                    <a href="#about" class="hidden sm:block text-sm font-medium text-google-textLightSecondary dark:text-google-textDarkSecondary hover:text-google-textLightPrimary dark:hover:text-google-textDarkPrimary transition-colors">About</a>
-                    
-                    <!-- Theme Toggle Button -->
-                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-google-surfaceLight dark:hover:bg-google-surfaceDark text-google-textLightSecondary dark:text-google-textDarkSecondary transition-colors focus:outline-none" aria-label="Toggle Theme">
-                        <!-- Sun Icon (shown in dark mode) -->
-                        <svg id="theme-toggle-light-icon" class="hidden w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-2.732l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                        </svg>
-                        <!-- Moon Icon (shown in light mode) -->
-                        <svg id="theme-toggle-dark-icon" class="hidden w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                        </svg>
-                    </button>
-                    
-                    <a href="mailto:contact@eduviskar.com" class="hidden sm:inline-flex items-center justify-center px-6 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-google-blue hover:bg-blue-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-google-blue">
-                        Contact us
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <!-- Modular Navbar Component -->
+    <nav id="site-nav"></nav>
 
     <!-- Hero Section (Google Workspace Style) -->
     <section class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center flex flex-col items-center">
@@ -124,6 +95,54 @@
              <!-- Grid populated by JS -->
              <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                  <!-- Material Cards injected here -->
+             </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-t border-google-borderLight dark:border-google-borderDark">
+             <div class="text-center mb-16">
+                 <span class="px-3.5 py-1 rounded-full border border-google-borderLight dark:border-google-borderDark text-xs font-medium text-google-textLightSecondary dark:text-google-textDarkSecondary mb-4 bg-google-bgLight dark:bg-google-bgDark inline-block">
+                     Who We Are
+                 </span>
+                 <h2 class="text-3xl sm:text-4xl font-medium mb-4 text-google-textLightPrimary dark:text-google-textDarkPrimary">About EduvisKar Technologies</h2>
+                 <p class="text-google-textLightSecondary dark:text-google-textDarkSecondary max-w-2xl mx-auto leading-relaxed">
+                     EduvisKar Technologies is a technology firm operating at the intersection of modern educational platforms and custom enterprise software development.
+                 </p>
+             </div>
+
+             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                 <!-- Card 1 -->
+                 <div class="p-8 rounded-2xl bg-google-bgLight dark:bg-google-bgDark border border-google-borderLight dark:border-google-borderDark transition-all hover:shadow-md">
+                     <div class="w-12 h-12 rounded-xl bg-google-blue/10 dark:bg-google-blueDark/10 text-google-blue dark:text-google-blueDark flex items-center justify-center mb-6">
+                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+                     </div>
+                     <h3 class="text-xl font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-3">EduvisKar Live</h3>
+                     <p class="text-sm text-google-textLightSecondary dark:text-google-textDarkSecondary leading-relaxed">
+                         Empowering K-12 students with AI-assisted WebRTC live classrooms, automated study summaries, visual mindmaps, and local tutor discovery.
+                     </p>
+                 </div>
+
+                 <!-- Card 2 -->
+                 <div class="p-8 rounded-2xl bg-google-bgLight dark:bg-google-bgDark border border-google-borderLight dark:border-google-borderDark transition-all hover:shadow-md">
+                     <div class="w-12 h-12 rounded-xl bg-google-blue/10 dark:bg-google-blueDark/10 text-google-blue dark:text-google-blueDark flex items-center justify-center mb-6">
+                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                     </div>
+                     <h3 class="text-xl font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-3">EduvisKar Labs</h3>
+                     <p class="text-sm text-google-textLightSecondary dark:text-google-textDarkSecondary leading-relaxed">
+                         Delivering elite custom software development SaaS, enterprise cloud infrastructure, high-concurrency backend services, and B2B rapid prototyping.
+                     </p>
+                 </div>
+
+                 <!-- Card 3 -->
+                 <div class="p-8 rounded-2xl bg-google-bgLight dark:bg-google-bgDark border border-google-borderLight dark:border-google-borderDark transition-all hover:shadow-md">
+                     <div class="w-12 h-12 rounded-xl bg-google-blue/10 dark:bg-google-blueDark/10 text-google-blue dark:text-google-blueDark flex items-center justify-center mb-6">
+                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m3 0h1m-1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                     </div>
+                     <h3 class="text-xl font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-3">Corporate Identity</h3>
+                     <p class="text-sm text-google-textLightSecondary dark:text-google-textDarkSecondary leading-relaxed">
+                         Sole proprietorship firm owned and operated by Satwik Sahil Kar (GSTIN: 21LHHPK7834B1ZF), registered in Keonjhar, Odisha, India.
+                     </p>
+                 </div>
              </div>
         </section>
     </main>
