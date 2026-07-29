@@ -1,6 +1,6 @@
 /**
  * Theme Toggle Component
- * Manages dark and light mode persistence and DOM state
+ * Manages dark and light mode persistence (Default: Light Mode)
  */
 export function initThemeToggle() {
     const themeToggleBtn = document.getElementById('theme-toggle');
@@ -9,8 +9,8 @@ export function initThemeToggle() {
 
     if (!themeToggleBtn) return;
 
-    // Check system preference or localStorage
-    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    // Light mode is default unless explicitly saved as 'dark' in localStorage
+    if (localStorage.getItem('color-theme') === 'dark') {
         document.documentElement.classList.add('dark');
         if (lightIcon) lightIcon.classList.remove('hidden');
         if (darkIcon) darkIcon.classList.add('hidden');
