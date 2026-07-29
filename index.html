@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduvisKar Technologies | Custom Software Development SaaS</title>
-    <meta name="description" content="EduvisKar Technologies provides elite custom software development, instant estimations, and enterprise SaaS solutions.">
+    <title>EduvisKar Technologies</title>
+    <meta name="description" content="Central Hub for EduvisKar Technologies products and services.">
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Roboto -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
     <link href="css/style.css" rel="stylesheet">
@@ -18,188 +18,126 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
+            darkMode: 'class', // Enables toggle via class on <html>
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Roboto', 'sans-serif'],
                     },
                     colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            200: '#bae6fd',
-                            300: '#7dd3fc',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e', // Deep Blue
-                            950: '#082f49', // Charcoal / Deepest Blue
-                        },
-                        darkBg: '#0b1121', // Sleek dark mode background
-                        glassBorder: 'rgba(255, 255, 255, 0.1)',
-                        glassBg: 'rgba(15, 23, 42, 0.6)'
-                    },
-                    backgroundImage: {
-                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-                    },
-                    spacing: {
-                        // Ensuring 8px vertical rhythm capability is inherent in Tailwind's default spacing,
-                        // but we can add specific custom tokens if needed.
+                        google: {
+                            blue: '#1a73e8',
+                            blueDark: '#8ab4f8',
+                            red: '#ea4335',
+                            yellow: '#fbbc05',
+                            green: '#34a853',
+                            bgLight: '#ffffff',
+                            surfaceLight: '#f8f9fa',
+                            borderLight: '#dadce0',
+                            textLightPrimary: '#202124',
+                            textLightSecondary: '#5f6368',
+                            bgDark: '#202124',
+                            surfaceDark: '#303134',
+                            borderDark: '#5f6368',
+                            textDarkPrimary: '#e8eaed',
+                            textDarkSecondary: '#9aa0a6'
+                        }
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-darkBg text-slate-200 font-sans antialiased overflow-x-hidden">
+<body class="bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary font-sans antialiased transition-colors duration-300">
     
-    <!-- Background Ambient Gradients -->
-    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-        <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-brand-600/20 rounded-full blur-[120px]"></div>
-        <div class="absolute top-[40%] -right-[10%] w-[40%] h-[50%] bg-brand-800/20 rounded-full blur-[100px]"></div>
-    </div>
-
     <!-- Navigation -->
-    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent">
+    <nav class="fixed top-0 w-full z-50 bg-google-bgLight dark:bg-google-bgDark border-b border-google-borderLight dark:border-google-borderDark transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                        E
-                    </div>
-                    <span class="font-bold text-xl tracking-tight text-white">EduvisKar <span class="text-brand-400">Tech</span></span>
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo Area -->
+                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer">
+                    <img src="img/eduviskar_logo.png" class="w-8 h-8 object-contain" alt="EduvisKar Logo">
+                    <span class="font-medium text-xl tracking-tight text-google-textLightPrimary dark:text-google-textDarkPrimary">
+                        EduvisKar Technologies
+                    </span>
                 </div>
 
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#products" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Products</a>
-                    <a href="#services" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Services</a>
-                    <a href="#about" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">About</a>
-                    <a href="#contact" class="px-5 py-2.5 rounded-md bg-white/10 hover:bg-white/20 border border-white/10 text-white text-sm font-medium transition-all backdrop-blur-sm">
-                        Get Estimation
-                    </a>
-                </div>
-
-                <!-- Mobile Menu Button -->
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-slate-300 hover:text-white focus:outline-none">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                <!-- Right Actions -->
+                <div class="flex items-center space-x-6">
+                    <a href="#products" class="hidden sm:block text-sm font-medium text-google-textLightSecondary dark:text-google-textDarkSecondary hover:text-google-textLightPrimary dark:hover:text-google-textDarkPrimary transition-colors">Products</a>
+                    <a href="#about" class="hidden sm:block text-sm font-medium text-google-textLightSecondary dark:text-google-textDarkSecondary hover:text-google-textLightPrimary dark:hover:text-google-textDarkPrimary transition-colors">About</a>
+                    
+                    <!-- Theme Toggle Button -->
+                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-google-surfaceLight dark:hover:bg-google-surfaceDark text-google-textLightSecondary dark:text-google-textDarkSecondary transition-colors focus:outline-none" aria-label="Toggle Theme">
+                        <!-- Sun Icon (shown in dark mode) -->
+                        <svg id="theme-toggle-light-icon" class="hidden w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-2.732l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                        </svg>
+                        <!-- Moon Icon (shown in light mode) -->
+                        <svg id="theme-toggle-dark-icon" class="hidden w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
                         </svg>
                     </button>
+                    
+                    <a href="#contact" class="hidden sm:inline-flex items-center justify-center px-6 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-google-blue hover:bg-blue-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-google-blue">
+                        Contact us
+                    </a>
                 </div>
-            </div>
-        </div>
-
-        <!-- Mobile Menu (Hidden by default) -->
-        <div id="mobile-menu" class="hidden md:hidden bg-brand-950/95 backdrop-blur-md border-b border-glassBorder">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#products" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Products</a>
-                <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Services</a>
-                <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">About</a>
-                <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-brand-400 hover:text-brand-300">Get Estimation</a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="pt-32 pb-20 lg:pt-48 lg:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center text-center">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-sm font-medium mb-8">
-            <span class="relative flex h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
-            </span>
-            Enterprise SaaS Platform
-        </div>
-        
-        <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-tight">
-            Elite Custom Software <br class="hidden md:block" />
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-brand-400 to-brand-600">
-                Development Hub
-            </span>
+    <!-- Hero Section (Google Workspace Style) -->
+    <section class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center flex flex-col items-center">
+        <!-- Subtle badge -->
+        <span class="px-4 py-1.5 rounded-full border border-google-borderLight dark:border-google-borderDark text-xs font-medium text-google-textLightSecondary dark:text-google-textDarkSecondary mb-8 bg-google-surfaceLight dark:bg-google-surfaceDark inline-block">
+            One Hub. Infinite Possibilities.
+        </span>
+
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-medium tracking-tight mb-6">
+            Welcome to the <br/>
+            <span class="text-google-blue dark:text-google-blueDark">EduvisKar</span> Ecosystem
         </h1>
         
-        <p class="max-w-2xl text-lg md:text-xl text-slate-400 mb-10">
-            Centralizing transparent workflows, instant estimations, and enterprise-grade engineering. We build the infrastructure that scales your vision.
+        <p class="mt-4 max-w-2xl text-lg text-google-textLightSecondary dark:text-google-textDarkSecondary mb-10 mx-auto leading-relaxed">
+            Connect seamlessly across our premier platforms. Whether you're engineering enterprise solutions or revolutionizing education, everything starts here.
         </p>
         
-        <div class="flex flex-col sm:flex-row gap-4">
-            <a href="#contact" class="px-8 py-3 rounded-lg bg-brand-600 hover:bg-brand-500 text-white font-medium transition-colors shadow-[0_0_20px_rgba(2,132,199,0.4)]">
-                Start a Project
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="#products" class="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-full text-white bg-google-blue hover:bg-blue-700 transition-colors shadow-sm">
+                Explore Products
             </a>
-            <a href="#products" class="px-8 py-3 rounded-lg bg-glassBg border border-glassBorder hover:bg-white/10 text-white font-medium transition-all backdrop-blur-md">
-                Explore Ecosystem
+            <a href="#about" class="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-full text-google-blue dark:text-google-blueDark bg-google-bgLight dark:bg-google-bgDark border border-google-borderLight dark:border-google-borderDark hover:bg-google-surfaceLight dark:hover:bg-google-surfaceDark transition-colors">
+                Learn more
             </a>
         </div>
     </section>
 
-    <!-- Main Content Container (Products & Services will go here) -->
-    <main id="main-content">
-        <!-- Products Section placeholder -->
-        <section id="products" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <!-- Products Section -->
+    <main id="main-content" class="bg-google-surfaceLight dark:bg-google-surfaceDark border-t border-google-borderLight dark:border-google-borderDark transition-colors duration-300">
+        <section id="products" class="py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
              <div class="text-center mb-16">
-                 <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Our Ecosystem</h2>
-                 <p class="text-slate-400 max-w-2xl mx-auto">Discover the interconnected products designed to accelerate learning, development, and enterprise operations.</p>
+                 <h2 class="text-3xl font-medium mb-4">Our Core Platforms</h2>
+                 <p class="text-google-textLightSecondary dark:text-google-textDarkSecondary">Select a destination to continue.</p>
              </div>
              
-             <!-- Grid will be populated by JS -->
-             <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                 <!-- Glassmorphism Cards injected here -->
-             </div>
-        </section>
-        
-        <!-- Services Section placeholder -->
-        <section id="services" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/5">
-             <div class="text-center mb-16">
-                 <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Enterprise Services</h2>
-                 <p class="text-slate-400 max-w-2xl mx-auto">Providing robust software engineering and consulting for CTOs and industry leaders.</p>
-             </div>
-             
-             <!-- Grid will be populated by JS -->
-             <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 <!-- Service Cards injected here -->
+             <!-- Grid populated by JS -->
+             <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <!-- Material Cards injected here -->
              </div>
         </section>
     </main>
     
     <!-- Footer -->
-    <footer class="bg-brand-950 border-t border-glassBorder pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold shadow-lg">E</div>
-                        <span class="font-bold text-lg text-white">EduvisKar <span class="text-brand-400">Technologies</span></span>
-                    </div>
-                    <p class="text-slate-400 text-sm max-w-sm mb-6">Elevating enterprise digital transformation through scalable architecture, transparent processes, and elite software engineering.</p>
-                </div>
-                <div>
-                    <h3 class="text-white font-medium mb-4">Ecosystem</h3>
-                    <ul class="space-y-2 text-sm text-slate-400">
-                        <li><a href="#" class="hover:text-brand-400 transition-colors">EduvisKar Labs</a></li>
-                        <li><a href="#" class="hover:text-brand-400 transition-colors">EduvisKar Official</a></li>
-                        <li><a href="#" class="hover:text-brand-400 transition-colors">Enterprise Tools</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-white font-medium mb-4">Connect</h3>
-                    <ul class="space-y-2 text-sm text-slate-400">
-                        <li><a href="#" class="hover:text-brand-400 transition-colors">Contact Us</a></li>
-                        <li><a href="#" class="hover:text-brand-400 transition-colors">Careers</a></li>
-                        <li><a href="#" class="hover:text-brand-400 transition-colors">LinkedIn</a></li>
-                    </ul>
-                </div>
+    <footer class="bg-google-bgLight dark:bg-google-bgDark border-t border-google-borderLight dark:border-google-borderDark py-12 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center gap-2 mb-4 md:mb-0">
+                <span class="font-medium text-lg text-google-textLightSecondary dark:text-google-textDarkSecondary">EduvisKar Technologies</span>
             </div>
-            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
-                <p>&copy; 2026 EduvisKar Technologies. All rights reserved.</p>
-                <div class="flex space-x-4 mt-4 md:mt-0">
-                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
-                </div>
+            <div class="flex space-x-6 text-sm text-google-textLightSecondary dark:text-google-textDarkSecondary">
+                <a href="#" class="hover:text-google-textLightPrimary dark:hover:text-google-textDarkPrimary transition-colors">Privacy</a>
+                <a href="#" class="hover:text-google-textLightPrimary dark:hover:text-google-textDarkPrimary transition-colors">Terms</a>
+                <a href="#" class="hover:text-google-textLightPrimary dark:hover:text-google-textDarkPrimary transition-colors">Contact</a>
             </div>
         </div>
     </footer>
