@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="gradIndigo" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#3730A3" />
+    </linearGradient>
+    <linearGradient id="gradOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#C2410C" />
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <path d="M 120 270 L 120 180 Q 120 140 160 140 L 340 140 Q 380 140 380 180 L 380 270" fill="none" stroke="url(#gradIndigo)" stroke-width="16" stroke-linecap="round"/>
+  
+  <polygon points="225,185 225,255 285,220" fill="none" stroke="url(#gradOrange)" stroke-width="12" stroke-linejoin="round" stroke-linecap="round" />
+  <polygon points="225,185 225,255 285,220" fill="url(#gradOrange)" />
+  
+  <circle cx="170" cy="180" r="10" fill="#FF5722" filter="url(#glow)"/>
+  
+  <path d="M 250 35 L 360 80 L 250 125 L 140 80 Z" fill="url(#gradOrange)" stroke="url(#gradOrange)" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M 170 93 L 170 135 Q 250 175 330 135 L 330 93" fill="none" stroke="url(#gradOrange)" stroke-width="14" stroke-linecap="round"/>
+  
+  <path d="M 350 85 L 385 115" stroke="url(#gradOrange)" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="385" cy="120" r="5" fill="url(#gradOrange)"/>
+  <path d="M 385 125 L 375 160 Q 385 165 395 160 Z" fill="url(#gradOrange)"/>
+
+  <path d="M 70 270 Q 160 220 250 290 Q 340 220 430 270 L 430 310 Q 340 260 250 330 Q 160 260 70 310 Z" fill="url(#gradIndigo)"/>
+  <path d="M 90 340 Q 170 290 250 360 Q 330 290 410 340" fill="none" stroke="url(#gradIndigo)" stroke-width="14" stroke-linecap="round"/>
+</svg>

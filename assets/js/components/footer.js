@@ -14,7 +14,7 @@ export function renderFooter() {
                 <!-- Brand & Entity Details (5 Cols) -->
                 <div class="md:col-span-5 space-y-4">
                     <a href="index.html" class="flex items-center gap-3">
-                        <img src="assets/img/eduviskar_logo_64x64.png" class="w-9 h-9 object-contain" alt="EduvisKar Logo">
+                        <img src="assets/img/eduviskar_logo.svg" class="w-9 h-9 object-contain" alt="EduvisKar Logo">
                         <span class="font-medium text-xl tracking-tight text-google-textLightPrimary dark:text-google-textDarkPrimary">
                             EduvisKar Technologies
                         </span>
@@ -35,8 +35,7 @@ export function renderFooter() {
                     <ul class="space-y-2.5 text-sm text-google-textLightSecondary dark:text-google-textDarkSecondary">
                         <li>
                             <a href="https://live.eduviskar.com" target="_blank" rel="noopener noreferrer" class="hover:text-google-blue dark:hover:text-google-blueDark transition-colors inline-flex items-center gap-1.5">
-                                <img src="assets/img/live_light_64x64.png" class="w-4 h-4 object-contain block dark:hidden" alt="EduvisKar Live">
-                                <img src="assets/img/live_dark_64x64.png" class="w-4 h-4 object-contain hidden dark:block" alt="EduvisKar Live">
+                                <img src="assets/img/eduviskar_logo.svg" class="w-4 h-4 object-contain" alt="EduvisKar Live">
                                 EduvisKar Live
                             </a>
                         </li>

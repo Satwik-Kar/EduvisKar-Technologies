@@ -14,7 +14,7 @@ export function renderNavbar() {
             <div class="flex justify-between items-center h-16">
                 <!-- Logo Area -->
                 <a href="index.html" class="flex-shrink-0 flex items-center gap-3 cursor-pointer">
-                    <img src="assets/img/eduviskar_logo_64x64.png" class="w-8 h-8 object-contain" alt="EduvisKar Logo">
+                    <img src="assets/img/eduviskar_logo.svg" class="w-8 h-8 object-contain" alt="EduvisKar Logo">
                     <span class="font-medium text-xl tracking-tight text-google-textLightPrimary dark:text-google-textDarkPrimary">
                         EduvisKar Technologies
                     </span>

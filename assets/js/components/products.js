@@ -14,7 +14,7 @@ export const productsData = [
     {
         title: 'EduvisKar Live',
         description: 'The core educational platform empowering students with curated knowledge and modern learning tools.',
-        icon: '<img src="assets/img/live_light_64x64.png" class="w-16 h-16 object-contain block dark:hidden" alt="EduvisKar Live"><img src="assets/img/live_dark_64x64.png" class="w-16 h-16 object-contain hidden dark:block" alt="EduvisKar Live">',
+        icon: '<img src="assets/img/eduviskar_logo.svg" class="w-16 h-16 object-contain" alt="EduvisKar Live">',
         link: 'https://live.eduviskar.com',
         color: '',
         bg: 'bg-transparent'
