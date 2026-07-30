@@ -42,8 +42,8 @@ const server = http.createServer((req, res) => {
     const ext = path.extname(absolutePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
-    // Static asset caching header
-    if (requestPath.startsWith('/assets/')) {
+    // Static asset caching header (prevent browser stale cache for JS modules during development)
+    if (requestPath.startsWith('/assets/') && process.env.NODE_ENV === 'production' && !requestPath.endsWith('.js')) {
         res.setHeader('Cache-Control', 'public, max-age=86400');
     } else {
         res.setHeader('Cache-Control', 'no-cache, must-revalidate');
