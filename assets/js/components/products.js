@@ -14,7 +14,7 @@ export const productsData = [
     {
         title: 'EduvisKar Live',
         description: 'The core educational platform empowering students with curated knowledge and modern learning tools.',
-        icon: '<img src="assets/img/eduviskar_logo.svg" class="w-16 h-16 object-contain" alt="EduvisKar Live">',
+        icon: '<img src="assets/img/eduviskar_live_logo.svg" class="w-16 h-16 object-contain" alt="EduvisKar Live">',
         link: 'https://live.eduviskar.com',
         color: '',
         bg: 'bg-transparent'
@@ -46,6 +46,6 @@ export function createMaterialCard(p) {
 export function renderProducts() {
     const grid = document.getElementById('products-grid');
     if (!grid) return;
-    
+
     grid.innerHTML = productsData.map(p => createMaterialCard(p)).join('');
 }
