@@ -4,67 +4,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduvisKar Technologies</title>
+    <title>EduvisKar Technologies — Parent Hub &amp; Product Ecosystem</title>
     <meta name="description"
-        content="Official portal of EduvisKar Technologies, featuring EduvisKar Labs and EduvisKar Live.">
+        content="Official parent corporate portal of EduvisKar Technologies. Powering EduvisKar Live (AI-powered Tutoring SaaS) and EduvisKar Labs (Custom Enterprise Software SaaS).">
     <link rel="canonical" href="https://eduviskar.com/">
 
     <!-- Open Graph / Social Sharing -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="EduvisKar Technologies">
     <meta property="og:url" content="https://eduviskar.com/">
-    <meta property="og:title" content="EduvisKar Technologies">
+    <meta property="og:title" content="EduvisKar Technologies — Parent Hub &amp; Product Ecosystem">
     <meta property="og:description"
-        content="Official portal of EduvisKar Technologies, featuring EduvisKar Labs and EduvisKar Live.">
+        content="Official parent corporate portal of EduvisKar Technologies. Powering EduvisKar Live and EduvisKar Labs.">
     <meta property="og:image" content="https://eduviskar.com/assets/img/eduviskar_tech_logo_64x64.png">
 
     <!-- Universal Link Preview Cards -->
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="EduvisKar Technologies">
+    <meta name="twitter:title" content="EduvisKar Technologies — Parent Hub &amp; Product Ecosystem">
     <meta name="twitter:description"
-        content="Official portal of EduvisKar Technologies, featuring EduvisKar Labs and EduvisKar Live.">
+        content="Official parent corporate portal of EduvisKar Technologies. Powering EduvisKar Live and EduvisKar Labs.">
     <meta name="twitter:image" content="https://eduviskar.com/assets/img/eduviskar_tech_logo_64x64.png">
 
-    <!-- Structured Data (JSON-LD) -->
+    <!-- Structured Data (JSON-LD Ecosystem) -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "EduvisKar Technologies",
-      "url": "https://eduviskar.com",
-      "logo": "https://eduviskar.com/assets/img/eduviskar_tech_logo_64x64.png",
-      "description": "Official company portal operating at the intersection of modern educational platforms and custom enterprise software development.",
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "EduvisKar Product Ecosystem",
-        "itemListElement": [
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "@id": "https://eduviskar.com/#organization",
+        "name": "EduvisKar Technologies",
+        "url": "https://eduviskar.com",
+        "logo": "https://eduviskar.com/assets/img/eduviskar_tech_logo_64x64.png",
+        "description": "Parent corporate entity operating at the intersection of modern educational platforms and custom enterprise software development.",
+        "email": "contact@eduviskar.com",
+        "sameAs": [
+          "https://www.facebook.com/eduviskartechnologies",
+          "https://www.instagram.com/eduviskartechnologies",
+          "https://www.youtube.com/@EduvisKarTechnologies-o9f",
+          "https://www.linkedin.com/company/eduviskartechnologies/"
+        ],
+        "subOrganization": [
           {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "SoftwareApplication",
-              "name": "EduvisKar Labs",
-              "url": "https://labs.eduviskar.com",
-              "applicationCategory": "BusinessApplication",
-              "description": "Custom Software Commissioning, Scope Estimation & Project Delivery Portal"
-            }
+            "@type": "Organization",
+            "name": "EduvisKar Live",
+            "url": "https://live.eduviskar.com",
+            "description": "Real-Time Classroom & AI Learning SaaS Platform"
           },
           {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "SoftwareApplication",
-              "name": "EduvisKar Live",
-              "url": "https://live.eduviskar.com",
-              "applicationCategory": "EducationalApplication",
-              "description": "Real-Time Classroom & AI Learning SaaS Platform"
-            }
+            "@type": "Organization",
+            "name": "EduvisKar Labs",
+            "url": "https://labs.eduviskar.com",
+            "description": "Custom Software Delivery & Maintenance Platform"
           }
-        ]
+        ],
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "EduvisKar Product Ecosystem",
+          "itemListElement": [
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "SoftwareApplication",
+                "name": "EduvisKar Live",
+                "url": "https://live.eduviskar.com",
+                "applicationCategory": "EducationalApplication",
+                "description": "Real-Time Classroom & AI Learning SaaS Platform"
+              }
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "SoftwareApplication",
+                "name": "EduvisKar Labs",
+                "url": "https://labs.eduviskar.com",
+                "applicationCategory": "BusinessApplication",
+                "description": "Custom Software Delivery & Maintenance Platform"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "@id": "https://eduviskar.com/#website",
+        "url": "https://eduviskar.com",
+        "name": "EduvisKar Technologies Ecosystem",
+        "publisher": {
+          "@id": "https://eduviskar.com/#organization"
+        }
       }
-    }
+    ]
     </script>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="assets/img/eduviskar_live_logo.svg">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" type="image/png" sizes="64x64" href="assets/img/eduviskar_tech_logo_64x64.png">
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="assets/img/eduviskar_tech_logo_64x64.png">
