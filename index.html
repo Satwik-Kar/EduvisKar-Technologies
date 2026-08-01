@@ -112,8 +112,15 @@
     <link href="assets/css/style.css" rel="stylesheet">
 
     <!-- Centralized Tailwind CSS Config & CDN -->
-    <script src="assets/js/tailwind.config.js?v=1.5"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind.config.js?v=1.5"></script>
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
 
 <body

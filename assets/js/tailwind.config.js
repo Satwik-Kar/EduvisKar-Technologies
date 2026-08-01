@@ -2,8 +2,7 @@
  * Centralized Tailwind CSS Configuration
  * Preserves the Google Material theme design tokens across all EduvisKar Technologies pages.
  */
-window.tailwind = window.tailwind || {};
-window.tailwind.config = {
+tailwind.config = {
     darkMode: 'class',
     theme: {
         extend: {
@@ -32,3 +31,4 @@ window.tailwind.config = {
         }
     }
 };
+
