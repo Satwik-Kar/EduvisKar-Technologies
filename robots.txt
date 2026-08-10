@@ -1,5 +1,8 @@
-# Robots.txt for EduvisKar Technologies
 User-agent: *
 Allow: /
+Allow: /privacy
+Allow: /terms
+Disallow: /assets/js/
+Disallow: /*.json$
 
 Sitemap: https://eduviskar.com/sitemap.xml
