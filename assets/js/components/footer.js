@@ -23,7 +23,7 @@ export function renderFooter() {
                         One ecosystem driving educational innovation and enterprise-grade software engineering. Empowering learners and businesses globally.
                     </p>
                     <div class="text-xs text-google-textLightSecondary dark:text-google-textDarkSecondary space-y-1 pt-2">
-                        <p><strong class="text-google-textLightPrimary dark:text-google-textDarkPrimary">Entity:</strong> Sole Proprietorship owned & operated by Satwik Sahil Kar</p>
+                        <p><strong class="text-google-textLightPrimary dark:text-google-textDarkPrimary">Entity:</strong> Sole Proprietorship</p>
                         <p><strong class="text-google-textLightPrimary dark:text-google-textDarkPrimary">GSTIN:</strong> 21LHHPK7834B1ZF</p>
                         <p><strong class="text-google-textLightPrimary dark:text-google-textDarkPrimary">Address:</strong> Anandapur, Keonjhar, Odisha 758022, India</p>
                     </div>
