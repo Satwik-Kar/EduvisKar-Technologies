@@ -272,10 +272,10 @@ const server = http.createServer(async (req, res) => {
                     res.writeHead(400, { 'Content-Type': 'application/json' });
                     return res.end(JSON.stringify({ success: false, error: 'GitHub and LinkedIn profiles are required for Full Stack Development Interns.' }));
                 }
-            } else if (cleanPosition === 'Growth & Creator Marketing Intern') {
+            } else if (cleanPosition === 'Digital Marketing Intern') {
                 if (!cleanSocial) {
                     res.writeHead(400, { 'Content-Type': 'application/json' });
-                    return res.end(JSON.stringify({ success: false, error: 'Social Media profile link is required for Growth & Creator Marketing Interns.' }));
+                    return res.end(JSON.stringify({ success: false, error: 'Social Media profile link is required for Digital Marketing Interns.' }));
                 }
             }
 

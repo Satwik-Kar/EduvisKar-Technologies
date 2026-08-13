@@ -102,7 +102,7 @@
                             class="w-full px-4 py-2.5 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark transition-colors">
                             <option value="" disabled selected>Select a role...</option>
                             <option value="Full Stack Development Intern">Full Stack Development Intern</option>
-                            <option value="Growth & Creator Marketing Intern">Growth & Creator Marketing Intern</option>
+                            <option value="Digital Marketing Intern">Digital Marketing Intern</option>
                         </select>
                     </div>
                 </div>
@@ -143,7 +143,7 @@
                         </div>
                     </div>
 
-                    <!-- Highest Follower Social Media Profile (Growth & Creator role) -->
+                    <!-- Highest Follower Social Media Profile (Digital Marketing role) -->
                     <div id="social-media-box" class="hidden">
                         <label for="social_media_url" class="block text-sm font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-2">
                             Highest Follower Social Media Profile <span class="text-red-500">*</span>
@@ -268,7 +268,7 @@
                     socialMediaBox.classList.add('hidden');
                     socialMediaInput.removeAttribute('required');
                     socialMediaInput.value = '';
-                } else if (role === 'Growth & Creator Marketing Intern') {
+                } else if (role === 'Digital Marketing Intern') {
                     // GitHub: Hidden & Removed
                     githubBox.classList.add('hidden');
                     githubInput.removeAttribute('required');
@@ -361,9 +361,9 @@
                         showAlert('GitHub and LinkedIn profile links are required for the Full Stack Development Intern role.', 'error');
                         return;
                     }
-                } else if (position === 'Growth & Creator Marketing Intern') {
+                } else if (position === 'Digital Marketing Intern') {
                     if (!social_media_url) {
-                        showAlert('Social Media profile link is required for the Growth & Creator Marketing Intern role.', 'error');
+                        showAlert('Social Media profile link is required for the Digital Marketing Intern role.', 'error');
                         return;
                     }
                 }
