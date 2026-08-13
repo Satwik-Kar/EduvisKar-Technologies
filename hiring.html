@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers & Hiring — EduvisKar Technologies</title>
+    <meta name="description" content="Apply for software engineering, design, and product roles at EduvisKar Technologies. Submit your candidate profile and resume directly.">
+    <meta name="keywords" content="EduvisKar Technologies Careers, EduvisKar Hiring, Jobs, Software Engineering Jobs">
+    <meta name="author" content="EduvisKar Technologies">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://eduviskar.com/hiring">
+
+    <meta property="og:title" content="Careers & Hiring — EduvisKar Technologies">
+    <meta property="og:description" content="Join EduvisKar Technologies. Submit your application and resume directly to our hiring team.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eduviskar.com/hiring">
+    <meta property="og:image" content="https://eduviskar.com/assets/img/eduviskar_tech_logo.png">
+    <meta property="og:site_name" content="EduvisKar Technologies">
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/img/eduviskar_tech_logo_64x64.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="assets/img/eduviskar_tech_logo_64x64.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <link href="assets/css/style.css" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind.config.js?v=1.5"></script>
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+
+<body class="bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary font-sans antialiased transition-colors duration-300 min-h-screen flex flex-col justify-between">
+
+    <nav id="site-nav"></nav>
+
+    <main class="pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <span class="px-4 py-1.5 rounded-full border border-google-borderLight dark:border-google-borderDark text-xs font-medium text-google-textLightSecondary dark:text-google-textDarkSecondary mb-4 bg-google-surfaceLight dark:bg-google-surfaceDark inline-block">
+                Careers at EduvisKar
+            </span>
+            <h1 class="text-3xl sm:text-4xl font-medium tracking-tight mb-3">
+                Job Application Form
+            </h1>
+            <p class="text-google-textLightSecondary dark:text-google-textDarkSecondary text-base max-w-xl mx-auto">
+                Fill out your details below and upload your resume. Our hiring team will review your application and reach out to you.
+            </p>
+        </div>
+
+        <!-- Alert Banners -->
+        <div id="alert-banner" class="hidden mb-6 p-4 rounded-xl text-sm font-medium transition-all"></div>
+
+        <!-- Candidate Application Card -->
+        <div class="bg-google-surfaceLight dark:bg-google-surfaceDark border border-google-borderLight dark:border-google-borderDark rounded-2xl p-6 sm:p-8 shadow-sm">
+            <form id="hiring-form" class="space-y-6">
+                
+                <!-- Full Name & Email (Grid) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label for="full_name" class="block text-sm font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-2">
+                            Full Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="full_name" required placeholder="e.g. Rahul Sharma"
+                            class="w-full px-4 py-2.5 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary placeholder-google-textLightSecondary/60 dark:placeholder-google-textDarkSecondary/60 focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark transition-colors">
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-2">
+                            Email Address <span class="text-red-500">*</span>
+                        </label>
+                        <input type="email" id="email" required placeholder="e.g. rahul@example.com"
+                            class="w-full px-4 py-2.5 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary placeholder-google-textLightSecondary/60 dark:placeholder-google-textDarkSecondary/60 focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark transition-colors">
+                    </div>
+                </div>
+
+                <!-- Phone & Position (Grid) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-2">
+                            Phone Number
+                        </label>
+                        <input type="tel" id="phone" placeholder="+91 9876543210"
+                            class="w-full px-4 py-2.5 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary placeholder-google-textLightSecondary/60 dark:placeholder-google-textDarkSecondary/60 focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark transition-colors">
+                    </div>
+
+                    <div>
+                        <label for="position" class="block text-sm font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-2">
+                            Position Applied For <span class="text-red-500">*</span>
+                        </label>
+                        <select id="position" required
+                            class="w-full px-4 py-2.5 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark transition-colors">
+                            <option value="" disabled selected>Select a role...</option>
+                            <option value="Full Stack Development Intern">Full Stack Development Intern</option>
+                            <option value="Growth & Creator Marketing Intern">Growth & Creator Marketing Intern</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Experience & Links (Grid) -->
+                <div>
+                    <label for="experience_years" class="block text-sm font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-2">
+                        Experience Level
+                    </label>
+                    <select id="experience_years"
+                        class="w-full px-4 py-2.5 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark transition-colors">
+                        <option value="Fresher / Entry Level (0-1 yr)">Fresher / Entry Level (0-1 yr)</option>
+                        <option value="Junior (1-3 yrs)">Junior (1-3 yrs)</option>
+                        <option value="Mid-Level (3-5 yrs)">Mid-Level (3-5 yrs)</option>
+                        <option value="Senior (5+ yrs)">Senior (5+ yrs)</option>
+                    </select>
+                </div>
+
+                <!-- Dynamic Role-Specific Links Container -->
+                <div id="dynamic-links-container" class="space-y-6">
+                    <!-- GitHub & LinkedIn Row -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div id="github-box">
+                            <label for="github_url" class="block text-sm font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-2">
+                                GitHub Profile Link <span id="github-required-star" class="text-red-500">*</span>
+                            </label>
+                            <input type="url" id="github_url" placeholder="https://github.com/username"
+                                class="w-full px-4 py-2.5 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary placeholder-google-textLightSecondary/60 dark:placeholder-google-textDarkSecondary/60 focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark transition-colors">
+                        </div>
+
+                        <div id="linkedin-box">
+                            <label for="linkedin_url" class="block text-sm font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-2">
+                                LinkedIn Profile Link <span id="linkedin-required-star" class="text-red-500">*</span>
+                                <span id="linkedin-optional-tag" class="hidden text-xs font-normal text-google-textLightSecondary dark:text-google-textDarkSecondary">(Optional)</span>
+                            </label>
+                            <input type="url" id="linkedin_url" placeholder="https://linkedin.com/in/username"
+                                class="w-full px-4 py-2.5 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary placeholder-google-textLightSecondary/60 dark:placeholder-google-textDarkSecondary/60 focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark transition-colors">
+                        </div>
+                    </div>
+
+                    <!-- Highest Follower Social Media Profile (Growth & Creator role) -->
+                    <div id="social-media-box" class="hidden">
+                        <label for="social_media_url" class="block text-sm font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-2">
+                            Highest Follower Social Media Profile <span class="text-red-500">*</span>
+                            <span class="block text-xs font-normal text-google-textLightSecondary dark:text-google-textDarkSecondary">Your main public profile (e.g. YouTube, Instagram, X/Twitter, LinkedIn, TikTok)</span>
+                        </label>
+                        <input type="url" id="social_media_url" placeholder="https://instagram.com/yourhandle or https://youtube.com/@channel"
+                            class="w-full px-4 py-2.5 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary placeholder-google-textLightSecondary/60 dark:placeholder-google-textDarkSecondary/60 focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark transition-colors">
+                    </div>
+
+                    <!-- Personal Portfolio Link -->
+                    <div id="portfolio-box">
+                        <label for="portfolio_url" class="block text-sm font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-2">
+                            Personal Portfolio <span class="text-xs font-normal text-google-textLightSecondary dark:text-google-textDarkSecondary">(Optional)</span>
+                        </label>
+                        <input type="url" id="portfolio_url" placeholder="https://yourportfolio.com"
+                            class="w-full px-4 py-2.5 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary placeholder-google-textLightSecondary/60 dark:placeholder-google-textDarkSecondary/60 focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark transition-colors">
+                    </div>
+                </div>
+
+                <!-- Resume File Upload (PDF / Doc stored in Database) -->
+                <div>
+                    <label class="block text-sm font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-2">
+                        Upload Resume PDF / Document <span class="text-xs font-normal text-google-textLightSecondary dark:text-google-textDarkSecondary">(Max 10MB, stored securely in database)</span>
+                    </label>
+                    <div class="border-2 border-dashed border-google-borderLight dark:border-google-borderDark rounded-xl p-6 text-center hover:border-google-blue dark:hover:border-google-blueDark transition-colors relative cursor-pointer" id="drop-zone">
+                        <input type="file" id="resume_file" accept=".pdf,.doc,.docx" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <div id="upload-placeholder" class="space-y-2">
+                            <svg class="mx-auto h-10 w-10 text-google-textLightSecondary dark:text-google-textDarkSecondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <div class="text-sm font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary">
+                                <span class="text-google-blue dark:text-google-blueDark">Click to upload</span> or drag and drop
+                            </div>
+                            <p class="text-xs text-google-textLightSecondary dark:text-google-textDarkSecondary">PDF, DOC, or DOCX (Up to 10MB)</p>
+                        </div>
+                        <div id="file-info" class="hidden flex items-center justify-between bg-google-bgLight dark:bg-google-bgDark p-3 rounded-lg border border-google-borderLight dark:border-google-borderDark">
+                            <div class="flex items-center space-x-3 overflow-hidden">
+                                <svg class="w-6 h-6 flex-shrink-0 text-google-blue dark:text-google-blueDark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span id="file-name" class="text-sm font-medium truncate text-google-textLightPrimary dark:text-google-textDarkPrimary">filename.pdf</span>
+                            </div>
+                            <button type="button" id="remove-file-btn" class="p-1 rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors z-10">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cover Letter / Notes -->
+                <div>
+                    <label for="cover_letter" class="block text-sm font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary mb-2">
+                        Cover Letter / Statement of Interest
+                    </label>
+                    <textarea id="cover_letter" rows="4" placeholder="Tell us briefly about your background, projects, or why you'd like to work with EduvisKar Technologies..."
+                        class="w-full px-4 py-2.5 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary placeholder-google-textLightSecondary/60 dark:placeholder-google-textDarkSecondary/60 focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark transition-colors"></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-2">
+                    <button type="submit" id="submit-btn" class="w-full py-3.5 px-6 rounded-xl font-medium text-white bg-google-blue hover:bg-blue-700 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-google-blue flex items-center justify-center space-x-2">
+                        <span id="btn-text">Submit Application</span>
+                        <svg id="btn-spinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <footer id="site-footer"></footer>
+
+    <script type="module" src="assets/js/main.js?v=1.5"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const positionSelect = document.getElementById('position');
+            const githubBox = document.getElementById('github-box');
+            const githubInput = document.getElementById('github_url');
+            const githubStar = document.getElementById('github-required-star');
+
+            const linkedinBox = document.getElementById('linkedin-box');
+            const linkedinInput = document.getElementById('linkedin_url');
+            const linkedinStar = document.getElementById('linkedin-required-star');
+            const linkedinTag = document.getElementById('linkedin-optional-tag');
+
+            const socialMediaBox = document.getElementById('social-media-box');
+            const socialMediaInput = document.getElementById('social_media_url');
+
+            const resumeFileInput = document.getElementById('resume_file');
+            const uploadPlaceholder = document.getElementById('upload-placeholder');
+            const fileInfo = document.getElementById('file-info');
+            const fileName = document.getElementById('file-name');
+            const removeFileBtn = document.getElementById('remove-file-btn');
+            const form = document.getElementById('hiring-form');
+            const alertBanner = document.getElementById('alert-banner');
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnSpinner = document.getElementById('btn-spinner');
+
+            let selectedBase64 = null;
+            let selectedFilename = '';
+            let selectedMimeType = '';
+
+            function updateFieldVisibility() {
+                const role = positionSelect.value;
+                if (role === 'Full Stack Development Intern') {
+                    // GitHub: Required & Visible
+                    githubBox.classList.remove('hidden');
+                    githubInput.setAttribute('required', 'required');
+                    githubStar.classList.remove('hidden');
+
+                    // LinkedIn: Required & Visible
+                    linkedinBox.classList.remove('hidden');
+                    linkedinInput.setAttribute('required', 'required');
+                    linkedinStar.classList.remove('hidden');
+                    linkedinTag.classList.add('hidden');
+
+                    // Social Media: Hidden
+                    socialMediaBox.classList.add('hidden');
+                    socialMediaInput.removeAttribute('required');
+                    socialMediaInput.value = '';
+                } else if (role === 'Growth & Creator Marketing Intern') {
+                    // GitHub: Hidden & Removed
+                    githubBox.classList.add('hidden');
+                    githubInput.removeAttribute('required');
+                    githubInput.value = '';
+
+                    // LinkedIn: Optional & Visible
+                    linkedinBox.classList.remove('hidden');
+                    linkedinInput.removeAttribute('required');
+                    linkedinStar.classList.add('hidden');
+                    linkedinTag.classList.remove('hidden');
+
+                    // Social Media: Required & Visible
+                    socialMediaBox.classList.remove('hidden');
+                    socialMediaInput.setAttribute('required', 'required');
+                }
+            }
+
+            positionSelect.addEventListener('change', updateFieldVisibility);
+            updateFieldVisibility();
+
+            // Handle file selection
+            resumeFileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                if (file.size > 10 * 1024 * 1024) {
+                    showAlert('File size exceeds the 10MB limit. Please select a smaller file.', 'error');
+                    resumeFileInput.value = '';
+                    return;
+                }
+
+                selectedFilename = file.name;
+                selectedMimeType = file.type || 'application/pdf';
+                fileName.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+                uploadPlaceholder.classList.add('hidden');
+                fileInfo.classList.remove('hidden');
+
+                const reader = new FileReader();
+                reader.onload = () => {
+                    // Extract base64 string
+                    selectedBase64 = reader.result.split(',')[1];
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Remove file
+            removeFileBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                resumeFileInput.value = '';
+                selectedBase64 = null;
+                selectedFilename = '';
+                selectedMimeType = '';
+                fileInfo.classList.add('hidden');
+                uploadPlaceholder.classList.remove('hidden');
+            });
+
+            function showAlert(msg, type) {
+                alertBanner.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'dark:bg-green-900/30', 'dark:text-green-300', 'dark:bg-red-900/30', 'dark:text-red-300');
+                if (type === 'success') {
+                    alertBanner.classList.add('bg-green-100', 'text-green-800', 'dark:bg-green-900/30', 'dark:text-green-300');
+                } else {
+                    alertBanner.classList.add('bg-red-100', 'text-red-800', 'dark:bg-red-900/30', 'dark:text-red-300');
+                }
+                alertBanner.textContent = msg;
+                alertBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            // Handle form submission
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const full_name = document.getElementById('full_name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const position = positionSelect.value;
+                const experience_years = document.getElementById('experience_years').value;
+                const github_url = document.getElementById('github_url').value.trim();
+                const linkedin_url = document.getElementById('linkedin_url').value.trim();
+                const social_media_url = document.getElementById('social_media_url').value.trim();
+                const portfolio_url = document.getElementById('portfolio_url').value.trim();
+                const cover_letter = document.getElementById('cover_letter').value.trim();
+
+                if (!full_name || !email || !position) {
+                    showAlert('Please fill in all required fields.', 'error');
+                    return;
+                }
+
+                if (position === 'Full Stack Development Intern') {
+                    if (!github_url || !linkedin_url) {
+                        showAlert('GitHub and LinkedIn profile links are required for the Full Stack Development Intern role.', 'error');
+                        return;
+                    }
+                } else if (position === 'Growth & Creator Marketing Intern') {
+                    if (!social_media_url) {
+                        showAlert('Social Media profile link is required for the Growth & Creator Marketing Intern role.', 'error');
+                        return;
+                    }
+                }
+
+                // UI loading state
+                submitBtn.disabled = true;
+                btnText.textContent = 'Submitting Application...';
+                btnSpinner.classList.remove('hidden');
+
+                try {
+                    const payload = {
+                        full_name,
+                        email,
+                        phone,
+                        position,
+                        experience_years,
+                        github_url,
+                        linkedin_url,
+                        portfolio_url,
+                        social_media_url,
+                        cover_letter,
+                        resume_filename: selectedFilename,
+                        resume_mimetype: selectedMimeType,
+                        resume_base64: selectedBase64
+                    };
+
+                    const response = await fetch('/api/hiring/apply', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        showAlert('Thank you! Your application has been successfully submitted to EduvisKar Technologies.', 'success');
+                        form.reset();
+                        removeFileBtn.click();
+                    } else {
+                        showAlert(result.error || 'Failed to submit application. Please try again.', 'error');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showAlert('Network or server error while submitting. Please try again.', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    btnText.textContent = 'Submit Application';
+                    btnSpinner.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

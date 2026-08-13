@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Candidate Dashboard — EduvisKar Technologies</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/img/eduviskar_tech_logo_64x64.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <link href="assets/css/style.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind.config.js?v=1.5"></script>
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+
+<body class="bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary font-sans antialiased transition-colors duration-300 min-h-screen flex flex-col justify-between">
+
+    <nav id="site-nav"></nav>
+
+    <main class="pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+
+        <!-- Login Card (shown when unauthenticated) -->
+        <div id="login-container" class="max-w-md mx-auto my-12 bg-google-surfaceLight dark:bg-google-surfaceDark border border-google-borderLight dark:border-google-borderDark rounded-2xl p-8 shadow-sm">
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-full bg-google-blue/10 dark:bg-google-blueDark/20 text-google-blue dark:text-google-blueDark mx-auto flex items-center justify-center mb-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                </div>
+                <h1 class="text-2xl font-medium">Admin Access Required</h1>
+                <p class="text-xs text-google-textLightSecondary dark:text-google-textDarkSecondary mt-1">Enter your admin passcode to view candidate applications.</p>
+            </div>
+
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="admin-passcode" class="block text-sm font-medium mb-1">Admin Passcode</label>
+                    <input type="password" id="admin-passcode" required placeholder="Enter admin passcode"
+                        class="w-full px-4 py-2.5 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark transition-colors">
+                </div>
+                <div id="login-error" class="hidden text-xs text-red-500 font-medium"></div>
+                <button type="submit" class="w-full py-2.5 px-4 rounded-xl font-medium text-white bg-google-blue hover:bg-blue-700 transition-colors shadow-sm">
+                    Unlock Dashboard
+                </button>
+            </form>
+        </div>
+
+        <!-- Dashboard Content (hidden until authenticated) -->
+        <div id="dashboard-container" class="hidden space-y-6">
+
+            <!-- Header & Toolbar -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-google-borderLight dark:border-google-borderDark pb-6">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-3xl font-medium tracking-tight">Hiring Applications</h1>
+                        <span id="candidate-count-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-google-blue/10 dark:bg-google-blueDark/20 text-google-blue dark:text-google-blueDark">
+                            0 Candidates
+                        </span>
+                    </div>
+                    <p class="text-sm text-google-textLightSecondary dark:text-google-textDarkSecondary mt-1">Manage, review, and download resumes of candidates who applied.</p>
+                </div>
+
+                <div class="flex items-center gap-3 flex-wrap">
+                    <button id="export-csv-btn" class="px-4 py-2 rounded-xl text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Export to CSV
+                    </button>
+                    <button id="logout-btn" class="px-4 py-2 rounded-xl text-sm font-medium border border-google-borderLight dark:border-google-borderDark hover:bg-google-surfaceLight dark:hover:bg-google-surfaceDark transition-colors">
+                        Lock / Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters Bar -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-between items-center">
+                <div class="w-full sm:w-80 relative">
+                    <input type="text" id="search-input" placeholder="Search by name, email, or role..."
+                        class="w-full pl-10 pr-4 py-2 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-surfaceLight dark:bg-google-surfaceDark text-sm focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark">
+                    <svg class="w-4 h-4 absolute left-3.5 top-3 text-google-textLightSecondary dark:text-google-textDarkSecondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+
+                <div class="w-full sm:w-auto">
+                    <select id="role-filter" class="w-full sm:w-auto px-4 py-2 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-surfaceLight dark:bg-google-surfaceDark text-sm focus:outline-none">
+                        <option value="">All Roles</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Applications Table -->
+            <div class="bg-google-surfaceLight dark:bg-google-surfaceDark border border-google-borderLight dark:border-google-borderDark rounded-2xl overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-black/5 dark:bg-white/5 border-b border-google-borderLight dark:border-google-borderDark text-xs font-semibold uppercase tracking-wider text-google-textLightSecondary dark:text-google-textDarkSecondary">
+                            <tr>
+                                <th class="px-6 py-4">Candidate</th>
+                                <th class="px-6 py-4">Position</th>
+                                <th class="px-6 py-4">Experience</th>
+                                <th class="px-6 py-4">Date Applied</th>
+                                <th class="px-6 py-4">Resume</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="candidates-tbody" class="divide-y divide-google-borderLight dark:divide-google-borderDark">
+                            <!-- Rows rendered dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="no-candidates-msg" class="hidden p-12 text-center text-google-textLightSecondary dark:text-google-textDarkSecondary">
+                    No candidate applications match your filter criteria.
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Cover Letter / Detail Modal -->
+    <div id="detail-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-google-surfaceLight dark:bg-google-surfaceDark border border-google-borderLight dark:border-google-borderDark rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-xl max-h-[90vh] overflow-y-auto space-y-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 id="modal-candidate-name" class="text-2xl font-medium">Candidate Details</h3>
+                    <p id="modal-candidate-meta" class="text-xs text-google-textLightSecondary dark:text-google-textDarkSecondary mt-1"></p>
+                </div>
+                <button id="close-modal-btn" class="p-1 rounded-lg text-google-textLightSecondary dark:text-google-textDarkSecondary hover:bg-black/5 dark:hover:bg-white/5">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div id="modal-links-container" class="space-y-2 text-sm">
+                <div id="modal-github-box" class="hidden">
+                    <strong class="text-xs font-semibold uppercase tracking-wider text-google-textLightSecondary dark:text-google-textDarkSecondary">GitHub: </strong>
+                    <a id="modal-github-link" href="#" target="_blank" rel="noopener noreferrer" class="text-google-blue dark:text-google-blueDark hover:underline break-all"></a>
+                </div>
+                <div id="modal-linkedin-box" class="hidden">
+                    <strong class="text-xs font-semibold uppercase tracking-wider text-google-textLightSecondary dark:text-google-textDarkSecondary">LinkedIn: </strong>
+                    <a id="modal-linkedin-link" href="#" target="_blank" rel="noopener noreferrer" class="text-google-blue dark:text-google-blueDark hover:underline break-all"></a>
+                </div>
+                <div id="modal-social-media-box" class="hidden">
+                    <strong class="text-xs font-semibold uppercase tracking-wider text-google-textLightSecondary dark:text-google-textDarkSecondary">Social Media Profile: </strong>
+                    <a id="modal-social-media-link" href="#" target="_blank" rel="noopener noreferrer" class="text-google-blue dark:text-google-blueDark hover:underline break-all"></a>
+                </div>
+                <div id="modal-portfolio-box" class="hidden">
+                    <strong class="text-xs font-semibold uppercase tracking-wider text-google-textLightSecondary dark:text-google-textDarkSecondary">Personal Portfolio: </strong>
+                    <a id="modal-portfolio-link" href="#" target="_blank" rel="noopener noreferrer" class="text-google-blue dark:text-google-blueDark hover:underline break-all"></a>
+                </div>
+            </div>
+
+            <div>
+                <strong class="block text-xs font-semibold uppercase tracking-wider text-google-textLightSecondary dark:text-google-textDarkSecondary mb-2">Cover Letter / Note:</strong>
+                <div id="modal-cover-letter" class="p-4 rounded-xl bg-google-bgLight dark:bg-google-bgDark border border-google-borderLight dark:border-google-borderDark text-sm whitespace-pre-wrap leading-relaxed"></div>
+            </div>
+
+            <div class="flex justify-end pt-4 border-t border-google-borderLight dark:border-google-borderDark gap-3">
+                <span id="modal-resume-container"></span>
+                <button id="modal-close-bottom-btn" class="px-5 py-2 rounded-xl text-sm font-medium bg-google-bgLight dark:bg-google-bgDark border border-google-borderLight dark:border-google-borderDark">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <footer id="site-footer"></footer>
+
+    <script type="module" src="assets/js/main.js?v=1.5"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginContainer = document.getElementById('login-container');
+            const dashboardContainer = document.getElementById('dashboard-container');
+            const loginForm = document.getElementById('login-form');
+            const adminPasscode = document.getElementById('admin-passcode');
+            const loginError = document.getElementById('login-error');
+
+            const candidateCountBadge = document.getElementById('candidate-count-badge');
+            const tbody = document.getElementById('candidates-tbody');
+            const noCandidatesMsg = document.getElementById('no-candidates-msg');
+            const searchInput = document.getElementById('search-input');
+            const roleFilter = document.getElementById('role-filter');
+            const exportCsvBtn = document.getElementById('export-csv-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            const detailModal = document.getElementById('detail-modal');
+            const modalCandidateName = document.getElementById('modal-candidate-name');
+            const modalCandidateMeta = document.getElementById('modal-candidate-meta');
+            const modalPortfolioContainer = document.getElementById('modal-portfolio-container');
+            const modalPortfolioLink = document.getElementById('modal-portfolio-link');
+            const modalCoverLetter = document.getElementById('modal-cover-letter');
+            const modalResumeContainer = document.getElementById('modal-resume-container');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const modalCloseBottomBtn = document.getElementById('modal-close-bottom-btn');
+
+            let sessionToken = sessionStorage.getItem('admin_token') || '';
+            let allCandidates = [];
+
+            if (sessionToken) {
+                fetchCandidates();
+            }
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const code = adminPasscode.value.trim();
+                attemptLogin(code);
+            });
+
+            async function attemptLogin(code) {
+                try {
+                    const res = await fetch('/api/hiring/admin/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ passcode: code })
+                    });
+                    const data = await res.json();
+
+                    if (res.ok && data.success && data.token) {
+                        sessionToken = data.token;
+                        sessionStorage.setItem('admin_token', sessionToken);
+                        loginError.classList.add('hidden');
+                        await fetchCandidates();
+                    } else {
+                        loginError.textContent = data.error || 'Invalid passcode or API key.';
+                        loginError.classList.remove('hidden');
+                        sessionStorage.removeItem('admin_token');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    loginError.textContent = 'Server connection error.';
+                    loginError.classList.remove('hidden');
+                }
+            }
+
+            async function fetchCandidates() {
+                try {
+                    const res = await fetch('/api/hiring/applications', {
+                        headers: {
+                            'Authorization': `Bearer ${sessionToken}`
+                        }
+                    });
+                    const data = await res.json();
+
+                    if (res.ok && data.success) {
+                        loginContainer.classList.add('hidden');
+                        dashboardContainer.classList.remove('hidden');
+                        allCandidates = data.data || [];
+                        populateRoleFilter();
+                        renderTable();
+                    } else {
+                        sessionStorage.removeItem('admin_token');
+                        sessionToken = '';
+                        dashboardContainer.classList.add('hidden');
+                        loginContainer.classList.remove('hidden');
+                        loginError.textContent = 'Session expired. Please log in again.';
+                        loginError.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    loginError.textContent = 'Error fetching candidates.';
+                    loginError.classList.remove('hidden');
+                }
+            }
+
+            logoutBtn.addEventListener('click', () => {
+                sessionStorage.removeItem('admin_token');
+                sessionToken = '';
+                dashboardContainer.classList.add('hidden');
+                loginContainer.classList.remove('hidden');
+                adminPasscode.value = '';
+            });
+
+            function populateRoleFilter() {
+                const roles = [...new Set(allCandidates.map(c => c.position))].filter(Boolean);
+                roleFilter.innerHTML = '<option value="">All Roles (' + allCandidates.length + ')</option>';
+                roles.forEach(role => {
+                    const count = allCandidates.filter(c => c.position === role).length;
+                    const opt = document.createElement('option');
+                    opt.value = role;
+                    opt.textContent = `${role} (${count})`;
+                    roleFilter.appendChild(opt);
+                });
+            }
+
+            function filterCandidates() {
+                const query = searchInput.value.toLowerCase().trim();
+                const selectedRole = roleFilter.value;
+
+                return allCandidates.filter(c => {
+                    const matchesRole = !selectedRole || c.position === selectedRole;
+                    const matchesQuery = !query || 
+                        c.full_name.toLowerCase().includes(query) ||
+                        c.email.toLowerCase().includes(query) ||
+                        c.position.toLowerCase().includes(query) ||
+                        (c.phone && c.phone.toLowerCase().includes(query));
+                    return matchesRole && matchesQuery;
+                });
+            }
+
+            function renderTable() {
+                const filtered = filterCandidates();
+                candidateCountBadge.textContent = `${filtered.length} Candidate${filtered.length === 1 ? '' : 's'}`;
+
+                if (filtered.length === 0) {
+                    tbody.innerHTML = '';
+                    noCandidatesMsg.classList.remove('hidden');
+                    return;
+                }
+
+                noCandidatesMsg.classList.add('hidden');
+                tbody.innerHTML = filtered.map(c => {
+                    const createdDate = new Date(c.created_at).toLocaleDateString(undefined, {
+                        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+
+                    const resumeBtn = c.has_resume ? `
+                        <a href="/api/hiring/applications/${c.id}/resume?token=${encodeURIComponent(sessionToken)}" 
+                            target="_blank" 
+                            class="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-medium bg-google-blue/10 dark:bg-google-blueDark/20 text-google-blue dark:text-google-blueDark hover:underline">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            Download PDF
+                        </a>
+                    ` : '<span class="text-xs text-google-textLightSecondary dark:text-google-textDarkSecondary">None</span>';
+
+                    return `
+                        <tr class="hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary">${escapeHtml(c.full_name)}</div>
+                                <div class="text-xs text-google-textLightSecondary dark:text-google-textDarkSecondary">
+                                    <a href="mailto:${escapeHtml(c.email)}" class="hover:underline">${escapeHtml(c.email)}</a>
+                                    ${c.phone ? ' &bull; ' + escapeHtml(c.phone) : ''}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 font-medium text-xs">
+                                <span class="px-2.5 py-1 rounded-md bg-black/5 dark:bg-white/5 border border-google-borderLight dark:border-google-borderDark">
+                                    ${escapeHtml(c.position)}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-xs text-google-textLightSecondary dark:text-google-textDarkSecondary">
+                                ${escapeHtml(c.experience_years || 'N/A')}
+                            </td>
+                            <td class="px-6 py-4 text-xs text-google-textLightSecondary dark:text-google-textDarkSecondary whitespace-nowrap">
+                                ${createdDate}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                ${resumeBtn}
+                            </td>
+                            <td class="px-6 py-4 text-right whitespace-nowrap space-x-2">
+                                <button data-id="${c.id}" class="view-btn px-3 py-1 rounded-lg text-xs font-medium bg-google-surfaceLight dark:bg-google-surfaceDark border border-google-borderLight dark:border-google-borderDark hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                                    Details
+                                </button>
+                                <button data-id="${c.id}" data-name="${escapeHtml(c.full_name)}" class="delete-btn px-3 py-1 rounded-lg text-xs font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                // Attach event listeners for dynamic action buttons
+                document.querySelectorAll('.view-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = parseInt(btn.getAttribute('data-id'));
+                        const candidate = allCandidates.find(item => item.id === id);
+                        if (candidate) openModal(candidate);
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const id = btn.getAttribute('data-id');
+                        const name = btn.getAttribute('data-name');
+                        if (confirm(`Are you sure you want to delete candidate "${name}"?`)) {
+                            await deleteCandidate(id);
+                        }
+                    });
+                });
+            }
+
+            searchInput.addEventListener('input', renderTable);
+            roleFilter.addEventListener('change', renderTable);
+
+            function openModal(c) {
+                modalCandidateName.textContent = c.full_name;
+                modalCandidateMeta.textContent = `${c.position} • ${c.email} ${c.phone ? '• ' + c.phone : ''}`;
+                
+                const githubBox = document.getElementById('modal-github-box');
+                const githubLink = document.getElementById('modal-github-link');
+                if (c.github_url) {
+                    githubBox.classList.remove('hidden');
+                    githubLink.href = c.github_url;
+                    githubLink.textContent = c.github_url;
+                } else {
+                    githubBox.classList.add('hidden');
+                }
+
+                const linkedinBox = document.getElementById('modal-linkedin-box');
+                const linkedinLink = document.getElementById('modal-linkedin-link');
+                if (c.linkedin_url) {
+                    linkedinBox.classList.remove('hidden');
+                    linkedinLink.href = c.linkedin_url;
+                    linkedinLink.textContent = c.linkedin_url;
+                } else {
+                    linkedinBox.classList.add('hidden');
+                }
+
+                const socialMediaBox = document.getElementById('modal-social-media-box');
+                const socialMediaLink = document.getElementById('modal-social-media-link');
+                if (c.social_media_url) {
+                    socialMediaBox.classList.remove('hidden');
+                    socialMediaLink.href = c.social_media_url;
+                    socialMediaLink.textContent = c.social_media_url;
+                } else {
+                    socialMediaBox.classList.add('hidden');
+                }
+
+                const portfolioBox = document.getElementById('modal-portfolio-box');
+                const portfolioLink = document.getElementById('modal-portfolio-link');
+                if (c.portfolio_url) {
+                    portfolioBox.classList.remove('hidden');
+                    portfolioLink.href = c.portfolio_url;
+                    portfolioLink.textContent = c.portfolio_url;
+                } else {
+                    portfolioBox.classList.add('hidden');
+                }
+
+                modalCoverLetter.textContent = c.cover_letter || 'No cover letter provided.';
+
+                if (c.has_resume) {
+                    modalResumeContainer.innerHTML = `
+                        <a href="/api/hiring/applications/${c.id}/resume?token=${encodeURIComponent(sessionToken)}" 
+                            target="_blank" 
+                            class="px-4 py-2 rounded-xl text-sm font-medium bg-google-blue text-white hover:bg-blue-700 transition-colors inline-flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            Download Resume PDF
+                        </a>
+                    `;
+                } else {
+                    modalResumeContainer.innerHTML = '';
+                }
+
+                detailModal.classList.remove('hidden');
+            }
+
+            closeModalBtn.addEventListener('click', () => detailModal.classList.add('hidden'));
+            modalCloseBottomBtn.addEventListener('click', () => detailModal.classList.add('hidden'));
+
+            async function deleteCandidate(id) {
+                try {
+                    const res = await fetch(`/api/hiring/applications/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${sessionToken}`
+                        }
+                    });
+                    const result = await res.json();
+                    if (res.ok && result.success) {
+                        allCandidates = allCandidates.filter(c => c.id !== parseInt(id));
+                        populateRoleFilter();
+                        renderTable();
+                    } else {
+                        alert(result.error || 'Failed to delete candidate.');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Network error while deleting candidate.');
+                }
+            }
+
+            // CSV Export Feature
+            exportCsvBtn.addEventListener('click', () => {
+                const candidates = filterCandidates();
+                if (candidates.length === 0) {
+                    alert('No candidate records to export.');
+                    return;
+                }
+
+                const headers = ['ID', 'Full Name', 'Email', 'Phone', 'Position', 'Experience', 'GitHub URL', 'LinkedIn URL', 'Social Media URL', 'Portfolio URL', 'Date Applied', 'Has Resume', 'Cover Letter'];
+                const csvRows = [headers.join(',')];
+
+                candidates.forEach(c => {
+                    const row = [
+                        c.id,
+                        `"${(c.full_name || '').replace(/"/g, '""')}"`,
+                        `"${(c.email || '').replace(/"/g, '""')}"`,
+                        `"${(c.phone || '').replace(/"/g, '""')}"`,
+                        `"${(c.position || '').replace(/"/g, '""')}"`,
+                        `"${(c.experience_years || '').replace(/"/g, '""')}"`,
+                        `"${(c.github_url || '').replace(/"/g, '""')}"`,
+                        `"${(c.linkedin_url || '').replace(/"/g, '""')}"`,
+                        `"${(c.social_media_url || '').replace(/"/g, '""')}"`,
+                        `"${(c.portfolio_url || '').replace(/"/g, '""')}"`,
+                        `"${(c.created_at || '').replace(/"/g, '""')}"`,
+                        c.has_resume ? 'Yes' : 'No',
+                        `"${(c.cover_letter || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`
+                    ];
+                    csvRows.push(row.join(','));
+                });
+
+                const csvString = csvRows.join('\n');
+                const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `eduviskar_candidates_${new Date().toISOString().slice(0, 10)}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+        });
+    </script>
+</body>
+
+</html>

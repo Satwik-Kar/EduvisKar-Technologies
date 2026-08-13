@@ -51,8 +51,9 @@ export function renderFooter() {
 
                 <!-- Legal & Compliance (2 Cols) -->
                 <div class="md:col-span-2 space-y-4">
-                    <h3 class="text-xs font-semibold uppercase tracking-wider text-google-textLightPrimary dark:text-google-textDarkPrimary">Legal & Trust</h3>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-google-textLightPrimary dark:text-google-textDarkPrimary">Company & Legal</h3>
                     <ul class="space-y-2.5 text-sm text-google-textLightSecondary dark:text-google-textDarkSecondary">
+                        <li><a href="hiring.html" class="hover:text-google-blue dark:hover:text-google-blueDark transition-colors">Careers & Hiring</a></li>
                         <li><a href="privacy.html" class="hover:text-google-blue dark:hover:text-google-blueDark transition-colors">Privacy Policy</a></li>
                         <li><a href="terms.html" class="hover:text-google-blue dark:hover:text-google-blueDark transition-colors">Terms of Service</a></li>
                         <li><a href="mailto:legal@eduviskar.com" class="hover:text-google-blue dark:hover:text-google-blueDark transition-colors">Legal Inquiry Desk</a></li>
