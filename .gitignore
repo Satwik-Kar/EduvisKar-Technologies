@@ -14,6 +14,10 @@ data/
 *.db-journal
 *.db-wal
 
+# Keys & Certificates
+*.key
+*.pem
+
 # OS files
 .DS_Store
 Thumbs.db

@@ -12,10 +12,10 @@ COPY . .
 
 # Set environment
 ENV NODE_ENV=production
-ENV PORT=8080
+ENV PORT=8081
 
 # Expose port
-EXPOSE 8080
+EXPOSE 8081
 
 # Run production server
 CMD ["node", "server.js"]

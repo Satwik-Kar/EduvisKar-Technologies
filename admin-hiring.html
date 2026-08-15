@@ -35,20 +35,25 @@
         <div id="login-container" class="max-w-md mx-auto my-12 bg-google-surfaceLight dark:bg-google-surfaceDark border border-google-borderLight dark:border-google-borderDark rounded-2xl p-8 shadow-sm">
             <div class="text-center mb-6">
                 <div class="w-12 h-12 rounded-full bg-google-blue/10 dark:bg-google-blueDark/20 text-google-blue dark:text-google-blueDark mx-auto flex items-center justify-center mb-3">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 0121 9z"></path></svg>
                 </div>
-                <h1 class="text-2xl font-medium">Admin Access Required</h1>
-                <p class="text-xs text-google-textLightSecondary dark:text-google-textDarkSecondary mt-1">Enter your admin passcode to view candidate applications.</p>
+                <h1 class="text-2xl font-medium">Admin Authorization Required</h1>
+                <p class="text-xs text-google-textLightSecondary dark:text-google-textDarkSecondary mt-1">Upload key file or paste admin key to unlock candidate applications.</p>
             </div>
 
             <form id="login-form" class="space-y-4">
-                <div>
-                    <label for="admin-passcode" class="block text-sm font-medium mb-1">Admin Passcode</label>
-                    <input type="password" id="admin-passcode" required placeholder="Enter admin passcode"
-                        class="w-full px-4 py-2.5 rounded-xl border border-google-borderLight dark:border-google-borderDark bg-google-bgLight dark:bg-google-bgDark text-google-textLightPrimary dark:text-google-textDarkPrimary focus:outline-none focus:ring-2 focus:ring-google-blue dark:focus:ring-google-blueDark transition-colors">
+                <!-- Drag & Drop Key File Area -->
+                <div id="key-dropzone" class="border-2 border-dashed border-google-borderLight dark:border-google-borderDark hover:border-google-blue dark:hover:border-google-blueDark rounded-2xl p-8 text-center cursor-pointer transition-all bg-google-bgLight/50 dark:bg-google-bgDark/50 group">
+                    <input type="file" id="key-file-input" accept=".key,.txt,.pem" class="hidden">
+                    <svg class="w-10 h-10 mx-auto text-google-textLightSecondary dark:text-google-textDarkSecondary group-hover:text-google-blue dark:group-hover:text-google-blueDark transition-colors mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <p class="text-base font-medium text-google-textLightPrimary dark:text-google-textDarkPrimary">Click to upload Key File</p>
+                    <p class="text-xs text-google-textLightSecondary dark:text-google-textDarkSecondary mt-1.5">or drag & drop key file here</p>
                 </div>
-                <div id="login-error" class="hidden text-xs text-red-500 font-medium"></div>
-                <button type="submit" class="w-full py-2.5 px-4 rounded-xl font-medium text-white bg-google-blue hover:bg-blue-700 transition-colors shadow-sm">
+
+                <div id="login-error" class="hidden text-xs text-red-500 font-medium text-center"></div>
+                <button type="submit" class="w-full py-3 px-4 rounded-xl font-medium text-white bg-google-blue hover:bg-blue-700 transition-colors shadow-sm">
                     Unlock Dashboard
                 </button>
             </form>
@@ -176,7 +181,7 @@
             const loginContainer = document.getElementById('login-container');
             const dashboardContainer = document.getElementById('dashboard-container');
             const loginForm = document.getElementById('login-form');
-            const adminPasscode = document.getElementById('admin-passcode');
+            const pasteKeyInput = document.getElementById('paste-key-input');
             const loginError = document.getElementById('login-error');
 
             const candidateCountBadge = document.getElementById('candidate-count-badge');
@@ -206,9 +211,53 @@
 
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const code = adminPasscode.value.trim();
-                attemptLogin(code);
+                if (keyFileInput && keyFileInput.files && keyFileInput.files[0]) {
+                    handleKeyFile(keyFileInput.files[0]);
+                } else {
+                    keyFileInput.click();
+                }
             });
+
+            const keyDropzone = document.getElementById('key-dropzone');
+            const keyFileInput = document.getElementById('key-file-input');
+
+            if (keyDropzone && keyFileInput) {
+                keyDropzone.addEventListener('click', () => keyFileInput.click());
+
+                keyDropzone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    keyDropzone.classList.add('border-google-blue', 'dark:border-google-blueDark');
+                });
+
+                keyDropzone.addEventListener('dragleave', () => {
+                    keyDropzone.classList.remove('border-google-blue', 'dark:border-google-blueDark');
+                });
+
+                keyDropzone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    keyDropzone.classList.remove('border-google-blue', 'dark:border-google-blueDark');
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        handleKeyFile(e.dataTransfer.files[0]);
+                    }
+                });
+
+                keyFileInput.addEventListener('change', (e) => {
+                    if (e.target.files && e.target.files[0]) {
+                        handleKeyFile(e.target.files[0]);
+                    }
+                });
+
+                function handleKeyFile(file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const keyContent = (e.target.result || '').trim();
+                        if (keyContent) {
+                            attemptLogin(keyContent);
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            }
 
             async function attemptLogin(code) {
                 try {
@@ -313,9 +362,10 @@
 
                 noCandidatesMsg.classList.add('hidden');
                 tbody.innerHTML = filtered.map(c => {
-                    const createdDate = new Date(c.created_at).toLocaleDateString(undefined, {
+                    const rawDate = c.created_at ? (c.created_at.includes('T') ? c.created_at : c.created_at.replace(' ', 'T') + 'Z') : '';
+                    const createdDate = rawDate ? new Date(rawDate).toLocaleDateString(undefined, {
                         year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                    });
+                    }) : 'N/A';
 
                     const resumeBtn = c.has_resume ? `
                         <a href="/api/hiring/applications/${c.id}/resume?token=${encodeURIComponent(sessionToken)}" 
@@ -386,7 +436,11 @@
 
             function openModal(c) {
                 modalCandidateName.textContent = c.full_name;
-                modalCandidateMeta.textContent = `${c.position} • ${c.email} ${c.phone ? '• ' + c.phone : ''}`;
+                const rawDate = c.created_at ? (c.created_at.includes('T') ? c.created_at : c.created_at.replace(' ', 'T') + 'Z') : '';
+                const formattedDate = rawDate ? new Date(rawDate).toLocaleDateString(undefined, {
+                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                }) : '';
+                modalCandidateMeta.textContent = `${c.position} • ${c.email} ${c.phone ? '• ' + c.phone : ''}${formattedDate ? ' • Applied: ' + formattedDate : ''}`;
                 
                 const githubBox = document.getElementById('modal-github-box');
                 const githubLink = document.getElementById('modal-github-link');

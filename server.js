@@ -18,7 +18,7 @@ function loadEnvFiles() {
                         const [key, ...vals] = trimmed.split('=');
                         const k = key.trim();
                         const v = vals.join('=').trim().replace(/^["']|["']$/g, '');
-                        if (k) {
+                        if (k && !process.env[k]) {
                             process.env[k] = v;
                         }
                     }
@@ -29,7 +29,7 @@ function loadEnvFiles() {
 }
 loadEnvFiles();
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8081;
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY || process.env.ADMIN_KEY || 'admin123';
 
 // Active cryptographically secure admin session tokens (token -> expireTimestamp)
