@@ -5,7 +5,7 @@
 export const productsData = [
     {
         title: 'EduvisKar Labs',
-        description: 'Elite custom software development SaaS. Enterprise-grade engineering and rapid B2B prototyping.',
+        description: 'We help enterprises build custom websites, mobile solutions, and cloud software with clear pricing and fast delivery.',
         icon: '<img src="assets/img/logo_labs_light.svg" class="w-16 h-16 object-contain block dark:hidden" alt="EduvisKar Labs"><img src="assets/img/logo_labs_dark.svg" class="w-16 h-16 object-contain hidden dark:block" alt="EduvisKar Labs">',
         link: 'https://labs.eduviskar.com',
         color: '',
@@ -13,7 +13,7 @@ export const productsData = [
     },
     {
         title: 'EduvisKar Live',
-        description: 'The core educational platform empowering students with curated knowledge and modern learning tools.',
+        description: 'An online learning cum booking platform with live video classrooms for online tuitions, and tutor matching for students.',
         icon: '<img src="assets/img/eduviskar_live_logo.svg" class="w-16 h-16 object-contain" alt="EduvisKar Live">',
         link: 'https://live.eduviskar.com',
         color: '',
