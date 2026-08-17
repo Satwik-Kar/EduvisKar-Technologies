@@ -395,6 +395,26 @@ const server = http.createServer(async (req, res) => {
         }
     }
 
+    // --- SEO 301 REDIRECTS FOR LEGACY / ALIAS ROUTES ---
+    if (pathname === '/legal') {
+        const tab = urlObj.searchParams.get('tab');
+        const redirectTarget = tab === 'privacy' ? '/privacy' : '/terms';
+        res.writeHead(301, { 'Location': redirectTarget, 'Cache-Control': 'public, max-age=31536000' });
+        return res.end();
+    }
+
+    if (pathname === '/features' || pathname === '/features/') {
+        res.writeHead(301, { 'Location': '/#features', 'Cache-Control': 'public, max-age=31536000' });
+        return res.end();
+    }
+
+    // Redirect requests ending with .html to clean extensionless canonical URLs
+    if (pathname.endsWith('.html') && pathname !== '/admin-hiring.html') {
+        const cleanPath = pathname === '/index.html' ? '/' : pathname.slice(0, -5);
+        res.writeHead(301, { 'Location': cleanPath + urlObj.search, 'Cache-Control': 'public, max-age=31536000' });
+        return res.end();
+    }
+
     // --- STATIC FILE SERVING ---
 
     let requestPath = pathname;
@@ -417,6 +437,17 @@ const server = http.createServer(async (req, res) => {
 
     const ext = path.extname(absolutePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+
+    // Prevent search engine crawlers from indexing fonts, JSON files, API routes, legacy Next.js assets, and admin portal
+    if (
+        pathname.startsWith('/_next/') ||
+        pathname.startsWith('/api/') ||
+        pathname === '/admin-hiring' ||
+        pathname === '/admin-hiring.html' ||
+        ['.woff', '.woff2', '.ttf', '.eot', '.json'].includes(ext)
+    ) {
+        res.setHeader('X-Robots-Tag', 'noindex, follow');
+    }
 
     if (requestPath.startsWith('/assets/') && process.env.NODE_ENV === 'production' && !requestPath.endsWith('.js')) {
         res.setHeader('Cache-Control', 'public, max-age=86400');

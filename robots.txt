@@ -2,7 +2,13 @@ User-agent: *
 Allow: /
 Allow: /privacy
 Allow: /terms
+Allow: /hiring
+Disallow: /admin-hiring
+Disallow: /admin-hiring.html
+Disallow: /api/
+Disallow: /_next/
 Disallow: /assets/js/
 Disallow: /*.json$
 
 Sitemap: https://eduviskar.com/sitemap.xml
+
