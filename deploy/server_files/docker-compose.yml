@@ -1,0 +1,179 @@
+services:
+  eduviskar_main:
+    image: ${IMAGE_MAIN:-eduviskar/main:latest}
+    container_name: eduviskar_main
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 8081
+      ADMIN_API_KEY: evk_prod_sec_f23eefb120ff1a301a010303253e90a1
+    volumes:
+      - tech_hiring_data:/app/data
+    networks:
+      - eduviskar_net
+    mem_limit: 50m
+    mem_reservation: 20m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    image: redis:7-alpine
+    container_name: eduviskar_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 64mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    expose:
+      - "6379"
+    networks:
+      - eduviskar_net
+    mem_limit: 100m
+    mem_reservation: 50m
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+
+  nextjs_1:
+    image: ${IMAGE_NAME:-eduviskar/eduviskar:latest}
+    container_name: eduviskar_app_1
+    restart: unless-stopped
+    env_file:
+      - ./domains/live.eduviskar.com/.env.production
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://redis:6379
+      TZ: UTC
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - eduviskar_net
+    mem_limit: 300m
+    mem_reservation: 150m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  nextjs_2:
+    image: ${IMAGE_NAME:-eduviskar/eduviskar:latest}
+    container_name: eduviskar_app_2
+    restart: unless-stopped
+    env_file:
+      - ./domains/live.eduviskar.com/.env.production
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://redis:6379
+      TZ: UTC
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - eduviskar_net
+    mem_limit: 300m
+    mem_reservation: 150m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  nextjs_admin:
+    image: ${IMAGE_NAME:-eduviskar/eduviskar:latest}
+    container_name: eduviskar_admin
+    restart: unless-stopped
+    env_file:
+      - ./domains/live.eduviskar.com/.env.production
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://redis:6379
+      TZ: UTC
+      PORT: 3005
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - eduviskar_net
+    mem_limit: 100m
+    mem_reservation: 50m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  scheduler:
+    image: mcuadros/ofelia:latest
+    container_name: eduviskar_scheduler
+    restart: unless-stopped
+    depends_on:
+      nextjs_1:
+        condition: service_started
+      nextjs_2:
+        condition: service_started
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    mem_limit: 50m
+    mem_reservation: 20m
+    labels:
+      ofelia.job-exec.sync-pending-transactions.schedule: "@every 1m"
+      ofelia.job-exec.sync-pending-transactions.container: "eduviskar_app_1"
+      ofelia.job-exec.sync-pending-transactions.command: "sh -c 'curl -s --max-time 60 -X GET -H \"Authorization: Bearer $${CRON_SECRET}\" http://localhost:3000/api/cron/sync-pending-transactions'"
+      ofelia.job-exec.process-missed-sessions.schedule: "@every 15m"
+      ofelia.job-exec.process-missed-sessions.container: "eduviskar_app_1"
+      ofelia.job-exec.process-missed-sessions.command: "sh -c 'curl -s --max-time 600 -X GET -H \"Authorization: Bearer $${CRON_SECRET}\" http://localhost:3000/api/cron/process-missed-sessions'"
+      ofelia.job-exec.local-link-reminder.schedule: "@daily"
+      ofelia.job-exec.local-link-reminder.container: "eduviskar_app_1"
+      ofelia.job-exec.local-link-reminder.command: "sh -c 'curl -s --max-time 600 -X GET -H \"Authorization: Bearer $${CRON_SECRET}\" http://localhost:3000/api/cron/local-link-reminder'"
+      ofelia.job-exec.session-reminder.schedule: "@every 5m"
+      ofelia.job-exec.session-reminder.container: "eduviskar_app_1"
+      ofelia.job-exec.session-reminder.command: "sh -c 'curl -s --max-time 120 -X GET -H \"Authorization: Bearer $${CRON_SECRET}\" http://localhost:3000/api/cron/session-reminder'"
+    networks:
+      - eduviskar_net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  nginx:
+    image: nginx:alpine
+    container_name: eduviskar_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./eduviskar.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./404.html:/usr/share/nginx/html/404.html:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - eduviskar_main
+      - nextjs_1
+      - nextjs_2
+      - nextjs_admin
+    networks:
+      - eduviskar_net
+    mem_limit: 50m
+    mem_reservation: 20m
+
+networks:
+  eduviskar_net:
+    driver: bridge
+
+volumes:
+  redis_data:
+  tech_hiring_data:

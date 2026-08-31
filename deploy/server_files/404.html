@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Page Not Found</title>
+    <link rel="icon" href="/favicon.ico">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #050505;
+            --fg: #ffffff;
+            --muted: #9ca3af;
+            --accent: #ea580c;
+            --accent-hover: #c2410c;
+            --accent-glow: rgba(234, 88, 12, 0.30);
+            --accent-muted: rgba(234, 88, 12, 0.15);
+            --secondary: #06b6d4;
+            --surface: #0a0a0a;
+            --border: rgba(255, 255, 255, 0.05);
+            --border-hover: rgba(255, 255, 255, 0.10);
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ── Animated grid background ── */
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 70% 50% at 50% 50%, black 20%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 70% 50% at 50% 50%, black 20%, transparent 100%);
+            pointer-events: none;
+            animation: grid-pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes grid-pulse {
+
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        /* ── Glow orbs ── */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            top: -10%;
+            left: -10%;
+            animation: orb-float-1 10s ease-in-out infinite alternate;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%);
+            bottom: -5%;
+            right: -5%;
+            animation: orb-float-2 14s ease-in-out infinite alternate;
+        }
+
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(234, 88, 12, 0.08) 0%, transparent 70%);
+            top: 50%;
+            right: 15%;
+            animation: orb-float-3 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes orb-float-1 {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.35;
+            }
+
+            100% {
+                transform: translate(60px, 40px) scale(1.1);
+                opacity: 0.55;
+            }
+        }
+
+        @keyframes orb-float-2 {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.25;
+            }
+
+            100% {
+                transform: translate(-40px, -60px) scale(1.15);
+                opacity: 0.45;
+            }
+        }
+
+        @keyframes orb-float-3 {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.2;
+            }
+
+            100% {
+                transform: translate(-30px, 30px) scale(0.9);
+                opacity: 0.4;
+            }
+        }
+
+        /* ── Scanline overlay ── */
+        .scanlines {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 255, 255, 0.008) 2px,
+                    rgba(255, 255, 255, 0.008) 4px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Main container ── */
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+        }
+
+        /* ── SVG illustration ── */
+        .illustration {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 2rem;
+            position: relative;
+            animation: illustration-breathe 4s ease-in-out infinite;
+        }
+
+        @keyframes illustration-breathe {
+
+            0%,
+            100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 15px var(--accent-glow));
+            }
+
+            50% {
+                transform: scale(1.03);
+                filter: drop-shadow(0 0 25px var(--accent-glow));
+            }
+        }
+
+        .illustration svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Glitch effect on the 404 text */
+        .error-code {
+            font-size: clamp(4rem, 15vw, 8rem);
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.06em;
+            background: linear-gradient(180deg, var(--fg) 0%, var(--muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            user-select: none;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .error-code::before,
+        .error-code::after {
+            content: '404';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, var(--fg) 0%, var(--muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+        }
+
+        .error-code::before {
+            color: var(--accent);
+            animation: glitch-1 3s infinite linear;
+            clip-path: inset(0 0 65% 0);
+        }
+
+        .error-code::after {
+            color: var(--secondary);
+            animation: glitch-2 3s infinite linear;
+            clip-path: inset(65% 0 0 0);
+        }
+
+        @keyframes glitch-1 {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: translate(0);
+            }
+
+            2% {
+                opacity: 0.6;
+                transform: translate(-3px, 1px);
+            }
+
+            4% {
+                opacity: 0;
+                transform: translate(0);
+            }
+
+            40% {
+                opacity: 0;
+                transform: translate(0);
+            }
+
+            42% {
+                opacity: 0.4;
+                transform: translate(2px, -1px);
+            }
+
+            44% {
+                opacity: 0;
+                transform: translate(0);
+            }
+        }
+
+        @keyframes glitch-2 {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: translate(0);
+            }
+
+            3% {
+                opacity: 0;
+                transform: translate(0);
+            }
+
+            5% {
+                opacity: 0.5;
+                transform: translate(3px, -1px);
+            }
+
+            7% {
+                opacity: 0;
+                transform: translate(0);
+            }
+
+            50% {
+                opacity: 0;
+                transform: translate(0);
+            }
+
+            52% {
+                opacity: 0.3;
+                transform: translate(-2px, 1px);
+            }
+
+            54% {
+                opacity: 0;
+                transform: translate(0);
+            }
+        }
+
+        /* ── Divider ── */
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            border-radius: 2px;
+            margin: 1.5rem auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            animation: divider-sweep 3s ease-in-out infinite;
+        }
+
+        @keyframes divider-sweep {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* ── Typography ── */
+        h1 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.75rem;
+            color: var(--fg);
+        }
+
+        p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .error-detail {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.25);
+            font-family: 'Courier New', monospace;
+            margin-top: 1.5rem;
+            letter-spacing: 0.05em;
+            animation: flicker 5s ease-in-out infinite;
+        }
+
+        @keyframes flicker {
+
+            0%,
+            100% {
+                opacity: 0.25;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            52% {
+                opacity: 0.15;
+            }
+
+            54% {
+                opacity: 0.4;
+            }
+        }
+
+        /* ── Floating sparks ── */
+        .spark {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 6px var(--accent), 0 0 12px var(--accent-glow);
+            animation: spark-float linear infinite;
+        }
+
+        @keyframes spark-float {
+            0% {
+                opacity: 0;
+                transform: translateY(0) translateX(0) scale(1);
+            }
+
+            5% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) translateX(var(--drift, 20px)) scale(0.2);
+            }
+        }
+
+        /* ── Electric arc pulses on the SVG ── */
+        .arc-pulse {
+            animation: arc-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes arc-glow {
+
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 480px) {
+            .illustration {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="scanlines"></div>
+
+    <!-- Main content -->
+    <div class="container">
+
+        <!-- Server crash / wire break SVG illustration -->
+        <div class="illustration">
+            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Broken server rack -->
+                <rect x="50" y="30" width="100" height="140" rx="6" fill="#0d0d0d" stroke="#1a1a1a" stroke-width="2" />
+
+                <!-- Server units (stacked) -->
+                <rect x="58" y="40" width="84" height="24" rx="3" fill="#111111" stroke="#222222" stroke-width="1" />
+                <rect x="58" y="72" width="84" height="24" rx="3" fill="#111111" stroke="#222222" stroke-width="1" />
+                <rect x="58" y="104" width="84" height="24" rx="3" fill="#111111" stroke="#222222" stroke-width="1" />
+                <rect x="58" y="136" width="84" height="24" rx="3" fill="#111111" stroke="#222222" stroke-width="1" />
+
+                <!-- Status lights — some dead, some flickering -->
+                <circle cx="132" cy="52" r="3" fill="#34d399" opacity="0.8" />
+                <circle cx="122" cy="52" r="3" fill="#34d399" opacity="0.6" />
+                <circle cx="132" cy="84" r="3" fill="#ea580c" class="arc-pulse" />
+                <circle cx="122" cy="84" r="3" fill="#6b7280" opacity="0.3" />
+                <circle cx="132" cy="116" r="3" fill="#6b7280" opacity="0.2" />
+                <circle cx="122" cy="116" r="3" fill="#6b7280" opacity="0.2" />
+                <circle cx="132" cy="148" r="3" fill="#f87171" class="arc-pulse" />
+                <circle cx="122" cy="148" r="3" fill="#6b7280" opacity="0.2" />
+
+                <!-- Broken / snapped wire on the left -->
+                <path d="M50 80 L35 80 L28 72" stroke="#ea580c" stroke-width="2.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M50 95 L38 95 L30 102" stroke="#ea580c" stroke-width="2.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+
+                <!-- Spark / electric arc rings at break point 1 (top wire) -->
+                <circle cx="28" cy="72" r="4" fill="none" stroke="#ea580c" stroke-width="1" class="arc-pulse"
+                    opacity="0.7" />
+                <circle cx="28" cy="72" r="7" fill="none" stroke="#ea580c" stroke-width="0.5" class="arc-pulse"
+                    style="animation-delay: 0.4s" opacity="0.4" />
+                <circle cx="28" cy="72" r="10" fill="none" stroke="#fbbf24" stroke-width="0.5" class="arc-pulse"
+                    style="animation-delay: 0.8s" opacity="0.2" />
+
+                <!-- Spark / electric arc rings at break point 2 (bottom wire) -->
+                <circle cx="30" cy="102" r="4" fill="none" stroke="#ea580c" stroke-width="1" class="arc-pulse"
+                    style="animation-delay: 0.2s" opacity="0.7" />
+                <circle cx="30" cy="102" r="7" fill="none" stroke="#ea580c" stroke-width="0.5" class="arc-pulse"
+                    style="animation-delay: 0.6s" opacity="0.4" />
+                <circle cx="30" cy="102" r="10" fill="none" stroke="#fbbf24" stroke-width="0.5" class="arc-pulse"
+                    style="animation-delay: 1s" opacity="0.2" />
+
+                <!-- Lightning bolt sparks — top wire -->
+                <path d="M24 68 L20 62 L26 64 L22 56" stroke="#ea580c" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" class="arc-pulse" />
+                <path d="M30 66 L34 58 L28 62 L32 54" stroke="#fbbf24" stroke-width="1" stroke-linecap="round"
+                    stroke-linejoin="round" class="arc-pulse" style="animation-delay: 0.3s" />
+                <path d="M20 72 L14 68 L18 64 L14 58" stroke="#ea580c" stroke-width="1" stroke-linecap="round"
+                    stroke-linejoin="round" class="arc-pulse" style="animation-delay: 0.7s" />
+
+                <!-- Lightning bolt sparks — bottom wire -->
+                <path d="M34 106 L38 100 L32 102 L36 94" stroke="#ea580c" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" class="arc-pulse" style="animation-delay: 0.5s" />
+                <path d="M26 108 L22 102 L28 104 L24 96" stroke="#fbbf24" stroke-width="1" stroke-linecap="round"
+                    stroke-linejoin="round" class="arc-pulse" style="animation-delay: 0.9s" />
+                <path d="M36 110 L42 106 L38 102 L42 96" stroke="#ea580c" stroke-width="1" stroke-linecap="round"
+                    stroke-linejoin="round" class="arc-pulse" style="animation-delay: 0.1s" />
+
+                <!-- Scattered spark dots around top break -->
+                <circle cx="22" cy="66" r="1.5" fill="#ea580c" class="arc-pulse" />
+                <circle cx="32" cy="68" r="1" fill="#fbbf24" class="arc-pulse" style="animation-delay: 0.2s" />
+                <circle cx="26" cy="76" r="1.2" fill="#ea580c" class="arc-pulse" style="animation-delay: 0.5s" />
+                <circle cx="18" cy="70" r="0.8" fill="#ea580c" class="arc-pulse" style="animation-delay: 0.8s" />
+                <circle cx="30" cy="64" r="0.8" fill="#fbbf24" class="arc-pulse" style="animation-delay: 1.1s" />
+
+                <!-- Scattered spark dots around bottom break -->
+                <circle cx="26" cy="108" r="1.5" fill="#ea580c" class="arc-pulse" style="animation-delay: 0.15s" />
+                <circle cx="36" cy="106" r="1" fill="#fbbf24" class="arc-pulse" style="animation-delay: 0.4s" />
+                <circle cx="32" cy="110" r="1.2" fill="#ea580c" class="arc-pulse" style="animation-delay: 0.65s" />
+                <circle cx="24" cy="100" r="0.8" fill="#ea580c" class="arc-pulse" style="animation-delay: 0.9s" />
+                <circle cx="38" cy="98" r="0.8" fill="#fbbf24" class="arc-pulse" style="animation-delay: 1.2s" />
+
+                <!-- Extra tiny flying sparks -->
+                <circle cx="16" cy="60" r="0.6" fill="#ea580c" class="arc-pulse" style="animation-delay: 0.35s" />
+                <circle cx="34" cy="56" r="0.6" fill="#fbbf24" class="arc-pulse" style="animation-delay: 0.55s" />
+                <circle cx="20" cy="78" r="0.5" fill="#ea580c" class="arc-pulse" style="animation-delay: 0.75s" />
+                <circle cx="22" cy="114" r="0.6" fill="#ea580c" class="arc-pulse" style="animation-delay: 0.45s" />
+                <circle cx="40" cy="112" r="0.5" fill="#fbbf24" class="arc-pulse" style="animation-delay: 0.85s" />
+                <circle cx="36" cy="90" r="0.6" fill="#ea580c" class="arc-pulse" style="animation-delay: 1.05s" />
+
+                <!-- Hanging disconnected cable -->
+                <path d="M35 80 Q30 88 32 96 Q34 104 30 110" stroke="#333333" stroke-width="2" stroke-linecap="round"
+                    stroke-dasharray="4 3" />
+
+                <!-- Error X symbol -->
+                <g transform="translate(85, 82)">
+                    <circle cx="15" cy="15" r="14" fill="rgba(234, 88, 12, 0.1)" stroke="#ea580c" stroke-width="1.5" />
+                    <path d="M8 8 L22 22" stroke="#ea580c" stroke-width="2.5" stroke-linecap="round" />
+                    <path d="M22 8 L8 22" stroke="#ea580c" stroke-width="2.5" stroke-linecap="round" />
+                </g>
+
+                <!-- Smoke / dust particles rising from the break -->
+                <circle cx="26" cy="60" r="2.5" fill="#6b7280" opacity="0.3" class="arc-pulse" />
+                <circle cx="32" cy="52" r="2" fill="#6b7280" opacity="0.2" class="arc-pulse"
+                    style="animation-delay: 0.3s" />
+                <circle cx="20" cy="46" r="1.5" fill="#6b7280" opacity="0.15" class="arc-pulse"
+                    style="animation-delay: 0.7s" />
+                <circle cx="30" cy="42" r="1" fill="#6b7280" opacity="0.1" class="arc-pulse"
+                    style="animation-delay: 1.1s" />
+                <circle cx="24" cy="116" r="2" fill="#6b7280" opacity="0.2" class="arc-pulse"
+                    style="animation-delay: 0.5s" />
+                <circle cx="34" cy="120" r="1.5" fill="#6b7280" opacity="0.15" class="arc-pulse"
+                    style="animation-delay: 0.9s" />
+            </svg>
+        </div>
+
+        <div class="error-code">404</div>
+        <div class="divider"></div>
+
+        <h1>Something went wrong</h1>
+        <p>The page you're looking for has been disconnected or no longer exists on this server.</p>
+
+        <div class="error-detail">ERR_CONNECTION_BROKEN — wire.status: disconnected</div>
+    </div>
+
+    <!-- Floating sparks -->
+    <script>
+        (function () {
+            const count = 24;
+            for (let i = 0; i < count; i++) {
+                const s = document.createElement('div');
+                s.className = 'spark';
+                s.style.left = Math.random() * 100 + '%';
+                s.style.bottom = '-6px';
+                s.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+                s.style.animationDuration = (4 + Math.random() * 8) + 's';
+                s.style.animationDelay = (Math.random() * 10) + 's';
+                const size = 1.5 + Math.random() * 3;
+                s.style.width = size + 'px';
+                s.style.height = size + 'px';
+                // Alternate between accent orange and secondary cyan
+                if (Math.random() > 0.6) {
+                    s.style.background = 'var(--secondary)';
+                    s.style.boxShadow = '0 0 6px var(--secondary), 0 0 12px rgba(6, 182, 212, 0.25)';
+                }
+                document.body.appendChild(s);
+            }
+        })();
+    </script>
+</body>
+
+</html>
