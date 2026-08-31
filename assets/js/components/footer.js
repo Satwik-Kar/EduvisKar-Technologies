@@ -41,9 +41,9 @@ export function renderFooter() {
                         </li>
                         <li>
                             <a href="https://labs.eduviskar.com" target="_blank" rel="noopener noreferrer" class="hover:text-google-blue dark:hover:text-google-blueDark transition-colors inline-flex items-center gap-1.5">
-                                <img src="assets/img/logo_labs_light.svg" class="w-4 h-4 object-contain block dark:hidden" alt="EduvisKar Labs">
-                                <img src="assets/img/logo_labs_dark.svg" class="w-4 h-4 object-contain hidden dark:block" alt="EduvisKar Labs">
-                                EduvisKar Labs
+                                <img src="assets/img/logo_labs_light.svg" class="w-4 h-4 object-contain block dark:hidden" alt="EK Labs">
+                                <img src="assets/img/logo_labs_dark.svg" class="w-4 h-4 object-contain hidden dark:block" alt="EK Labs">
+                                EK Labs
                             </a>
                         </li>
                     </ul>

@@ -1,12 +1,12 @@
 /**
  * Products Component
- * Renders core platform cards for EduvisKar Labs and EduvisKar Live
+ * Renders core platform cards for EK Labs and EduvisKar Live
  */
 export const productsData = [
     {
-        title: 'EduvisKar Labs',
+        title: 'EK Labs',
         description: 'We help enterprises build custom websites, mobile solutions, and cloud software with clear pricing and fast delivery.',
-        icon: '<img src="assets/img/logo_labs_light.svg" class="w-16 h-16 object-contain block dark:hidden" alt="EduvisKar Labs"><img src="assets/img/logo_labs_dark.svg" class="w-16 h-16 object-contain hidden dark:block" alt="EduvisKar Labs">',
+        icon: '<img src="assets/img/logo_labs_light.svg" class="w-16 h-16 object-contain block dark:hidden" alt="EK Labs"><img src="assets/img/logo_labs_dark.svg" class="w-16 h-16 object-contain hidden dark:block" alt="EK Labs">',
         link: 'https://labs.eduviskar.com',
         color: '',
         bg: 'bg-transparent'
