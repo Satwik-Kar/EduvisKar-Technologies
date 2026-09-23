@@ -8,7 +8,7 @@ const crypto = require('crypto');
 const { DatabaseSync } = require('node:sqlite');
 
 function loadEnvFiles() {
-    const files = ['.env', '.env.local', '.env.production'];
+    const files = ['.env', '.env.production'];
     files.forEach(filename => {
         const filePath = path.join(__dirname, filename);
         if (fs.existsSync(filePath)) {
@@ -19,7 +19,8 @@ function loadEnvFiles() {
                     if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
                         const [key, ...vals] = trimmed.split('=');
                         const k = key.trim();
-                        const v = vals.join('=').trim().replace(/^["']|["']$/g, 'https://api.phonepe.com/apis/pg');
+                        // FIX: Restored empty string replacement
+                        const v = vals.join('=').trim().replace(/^["']|["']$/g, '');
                         if (k && !process.env[k]) {
                             process.env[k] = v;
                         }
@@ -35,7 +36,6 @@ const PORT = process.env.PORT || 8081;
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY || process.env.ADMIN_KEY || 'admin123';
 
 const activeAdminSessions = new Map();
-
 const ipRateLimiter = new Map();
 
 setInterval(() => {
@@ -99,7 +99,8 @@ const MIME_TYPES = {
 
 function parseJsonBody(req) {
     return new Promise((resolve, reject) => {
-        let body = 'https://api.phonepe.com/apis/pg';
+        // FIX: Restored empty string
+        let body = '';
         req.on('data', chunk => {
             body += chunk.toString();
             if (body.length > 15 * 1024 * 1024) {
@@ -134,7 +135,6 @@ function checkAdminAuth(req, urlObj) {
             return true;
         }
     }
-
     const queryToken = urlObj.searchParams.get('token');
     if (queryToken) {
         const expireTime = activeAdminSessions.get(queryToken);
@@ -142,13 +142,10 @@ function checkAdminAuth(req, urlObj) {
             return true;
         }
     }
-
     const headerKey = req.headers['x-admin-key'];
     if (verifyKeyTimingSafe(headerKey, ADMIN_API_KEY)) return true;
-
     const queryKey = urlObj.searchParams.get('key');
     if (verifyKeyTimingSafe(queryKey, ADMIN_API_KEY)) return true;
-
     return false;
 }
 
@@ -157,18 +154,15 @@ function checkRateLimit(req) {
     const now = Date.now();
     const windowMs = 15 * 60 * 1000;
     const maxRequests = 10;
-
     let record = ipRateLimiter.get(ip);
     if (!record || now > record.resetTime) {
         record = { count: 1, resetTime: now + windowMs };
         ipRateLimiter.set(ip, record);
         return true;
     }
-
     if (record.count >= maxRequests) {
         return false;
     }
-
     record.count++;
     return true;
 }
@@ -238,7 +232,9 @@ expressApp.all('/api/pay/callback', async (req, res) => {
     const tx = await pool.query('UPDATE transactions SET status = $1 WHERE transaction_id = $2 RETURNING *', [finalStatus, merchantOrderId]);
     if (tx.rowCount === 0) return res.status(400).send('Transaction not found');
     await axios.post(tx.rows[0].webhook_url, { transactionId: merchantOrderId, status: finalStatus, userId: tx.rows[0].user_id, amount: tx.rows[0].amount }, { headers: { 'x-api-secret': API_SECRET } });
-    res.redirect(`${tx.rows[0].return_url}?status=${finalStatus}&txnId=${merchantOrderId}`);
+    
+    const delimiter = tx.rows[0].return_url.includes('?') ? '&' : '?';
+    res.redirect(`${tx.rows[0].return_url}${delimiter}status=${finalStatus}&txnId=${merchantOrderId}`);
   } catch (err) { res.status(500).send('Callback Verification Error'); }
 });
 
@@ -255,11 +251,11 @@ const server = http.createServer(async (req, res) => {
     const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     const pathname = urlObj.pathname;
 
-
     if (pathname === '/api/hiring/admin/login' && req.method === 'POST') {
         try {
             const data = await parseJsonBody(req);
-            const passcode = data.passcode || data.key || 'https://api.phonepe.com/apis/pg';
+            // FIX: Restored empty string
+            const passcode = data.passcode || data.key || '';
 
             if (verifyKeyTimingSafe(passcode, ADMIN_API_KEY)) {
                 const sessionToken = crypto.randomBytes(32).toString('hex');
@@ -291,19 +287,9 @@ const server = http.createServer(async (req, res) => {
         try {
             const data = await parseJsonBody(req);
             const {
-                full_name,
-                email,
-                phone,
-                position,
-                experience_years,
-                github_url,
-                linkedin_url,
-                portfolio_url,
-                social_media_url,
-                cover_letter,
-                resume_filename,
-                resume_mimetype,
-                resume_base64
+                full_name, email, phone, position, experience_years, github_url, 
+                linkedin_url, portfolio_url, social_media_url, cover_letter, 
+                resume_filename, resume_mimetype, resume_base64
             } = data;
 
             if (!full_name || !email || !position) {
@@ -317,15 +303,16 @@ const server = http.createServer(async (req, res) => {
                 return res.end(JSON.stringify({ success: false, error: 'Invalid email address format.' }));
             }
 
+            // FIX: Restored empty strings across all sanitization logic
             const cleanName = full_name.trim().slice(0, 100);
-            const cleanPhone = (phone || 'https://api.phonepe.com/apis/pg').trim().slice(0, 30);
+            const cleanPhone = (phone || '').trim().slice(0, 30);
             const cleanPosition = position.trim().slice(0, 100);
-            const cleanExp = (experience_years || 'https://api.phonepe.com/apis/pg').trim().slice(0, 50);
-            const cleanGithub = (github_url || 'https://api.phonepe.com/apis/pg').trim().slice(0, 300);
-            const cleanLinkedin = (linkedin_url || 'https://api.phonepe.com/apis/pg').trim().slice(0, 300);
-            const cleanPortfolio = (portfolio_url || 'https://api.phonepe.com/apis/pg').trim().slice(0, 300);
-            const cleanSocial = (social_media_url || 'https://api.phonepe.com/apis/pg').trim().slice(0, 300);
-            const cleanCover = (cover_letter || 'https://api.phonepe.com/apis/pg').trim().slice(0, 5000);
+            const cleanExp = (experience_years || '').trim().slice(0, 50);
+            const cleanGithub = (github_url || '').trim().slice(0, 300);
+            const cleanLinkedin = (linkedin_url || '').trim().slice(0, 300);
+            const cleanPortfolio = (portfolio_url || '').trim().slice(0, 300);
+            const cleanSocial = (social_media_url || '').trim().slice(0, 300);
+            const cleanCover = (cover_letter || '').trim().slice(0, 5000);
 
             if (cleanPosition === 'Full Stack Development Intern') {
                 if (!cleanGithub || !cleanLinkedin) {
@@ -351,17 +338,10 @@ const server = http.createServer(async (req, res) => {
             `);
 
             stmt.run(
-                cleanName,
-                cleanEmail,
-                cleanPhone,
-                cleanPosition,
-                cleanExp,
-                cleanGithub,
-                cleanLinkedin,
-                cleanPortfolio,
-                cleanSocial,
-                cleanCover,
-                (resume_filename || 'https://api.phonepe.com/apis/pg').trim().slice(0, 150),
+                cleanName, cleanEmail, cleanPhone, cleanPosition, cleanExp, cleanGithub, 
+                cleanLinkedin, cleanPortfolio, cleanSocial, cleanCover,
+                // FIX: Restored empty string
+                (resume_filename || '').trim().slice(0, 150),
                 (resume_mimetype || 'application/pdf').trim().slice(0, 50),
                 resumeBuffer
             );
@@ -369,7 +349,6 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(201, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ success: true, message: 'Application submitted successfully!' }));
         } catch (err) {
-            console.error('Error handling job application submission:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ success: false, error: 'Internal server error' }));
         }
@@ -380,7 +359,6 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(401, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ success: false, error: 'Unauthorized. Invalid admin passcode.' }));
         }
-
         try {
             const stmt = db.prepare(`
                 SELECT 
@@ -388,14 +366,12 @@ const server = http.createServer(async (req, res) => {
                     github_url, linkedin_url, portfolio_url, social_media_url, 
                     cover_letter, resume_filename, resume_mimetype, status, created_at,
                     (CASE WHEN resume_blob IS NOT NULL THEN 1 ELSE 0 END) AS has_resume
-                FROM candidates 
-                ORDER BY id DESC
+                FROM candidates ORDER BY id DESC
             `);
             const candidates = stmt.all();
             res.writeHead(200, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ success: true, data: candidates }));
         } catch (err) {
-            console.error('Error fetching candidates:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ success: false, error: err.message }));
         }
@@ -406,20 +382,16 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(401, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ success: false, error: 'Unauthorized.' }));
         }
-
         try {
             const id = pathname.split('/')[4];
             const stmt = db.prepare(`SELECT resume_filename, resume_mimetype, resume_blob FROM candidates WHERE id = ?`);
             const row = stmt.get(id);
-
             if (!row || !row.resume_blob) {
                 res.writeHead(404, { 'Content-Type': 'application/json' });
                 return res.end(JSON.stringify({ success: false, error: 'Resume not found for this candidate.' }));
             }
-
             const filename = row.resume_filename || `candidate_${id}_resume.pdf`;
             const mimeType = row.resume_mimetype || 'application/pdf';
-
             res.writeHead(200, {
                 'Content-Type': mimeType,
                 'Content-Disposition': `attachment; filename="${encodeURIComponent(filename)}"`,
@@ -427,7 +399,6 @@ const server = http.createServer(async (req, res) => {
             });
             return res.end(row.resume_blob);
         } catch (err) {
-            console.error('Error fetching resume blob:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ success: false, error: err.message }));
         }
@@ -438,7 +409,6 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(401, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ success: false, error: 'Unauthorized.' }));
         }
-
         try {
             const id = pathname.split('/')[4];
             const stmt = db.prepare(`DELETE FROM candidates WHERE id = ?`);
@@ -446,7 +416,6 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(200, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ success: true, message: 'Candidate deleted successfully.' }));
         } catch (err) {
-            console.error('Error deleting candidate:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ success: false, error: err.message }));
         }
@@ -470,9 +439,7 @@ const server = http.createServer(async (req, res) => {
         return res.end();
     }
 
-
     let requestPath = pathname;
-
     if (requestPath === '/') {
         requestPath = '/index.html';
     } else if (!path.extname(requestPath)) {
@@ -482,7 +449,6 @@ const server = http.createServer(async (req, res) => {
     }
 
     const absolutePath = path.join(__dirname, requestPath);
-
     if (!absolutePath.startsWith(__dirname)) {
         res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
         return res.end('403 Forbidden');
@@ -492,10 +458,8 @@ const server = http.createServer(async (req, res) => {
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
     if (
-        pathname.startsWith('/_next/') ||
-        pathname.startsWith('/api/') ||
-        pathname === '/admin-hiring' ||
-        pathname === '/admin-hiring.html' ||
+        pathname.startsWith('/_next/') || pathname.startsWith('/api/') ||
+        pathname === '/admin-hiring' || pathname === '/admin-hiring.html' ||
         ['.woff', '.woff2', '.ttf', '.eot', '.json'].includes(ext)
     ) {
         res.setHeader('X-Robots-Tag', 'noindex, follow');
@@ -519,18 +483,16 @@ const server = http.createServer(async (req, res) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, follow">
-    <title>404 - Page Not Found | EduvisKar Technologies</title>
+    <title>404 - Page Not Found</title>
 </head>
-<body style="font-family: system-ui, -apple-system, sans-serif; text-align: center; padding: 50px; background-color: #f8f9fa; color: #202124;">
-    <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">404 - Page Not Found</h1>
-    <p style="font-size: 1.125rem; color: #5f6368; margin-bottom: 2rem;">The requested page <code>${requestPath}</code> does not exist.</p>
-    <a href="/" style="display: inline-block; padding: 12px 24px; background-color: #1a73e8; color: #ffffff; text-decoration: none; border-radius: 24px; font-weight: 500;">Return to Home</a>
+<body style="text-align: center; padding: 50px; font-family: sans-serif;">
+    <h1>404 - Page Not Found</h1>
+    <a href="/">Return to Home</a>
 </body>
 </html>`);
             } else {
                 res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
-                res.end(`500 Internal Server Error: ${err.code}`);
+                res.end(`500 Internal Server Error`);
             }
         } else {
             res.writeHead(200, { 'Content-Type': contentType });
@@ -546,4 +508,3 @@ server.listen(PORT, () => {
 process.on('SIGTERM', () => {
     server.close();
 });
-

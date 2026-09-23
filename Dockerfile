@@ -5,7 +5,10 @@ FROM node:22-alpine
 WORKDIR /app
 
 # Copy package metadata
-COPY package.json ./
+COPY package.json package-lock.json* ./
+
+# Install dependencies
+RUN npm ci --omit=dev
 
 # Copy application source code
 COPY . .
