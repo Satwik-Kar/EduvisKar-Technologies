@@ -19,7 +19,7 @@ function loadEnvFiles() {
                     if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
                         const [key, ...vals] = trimmed.split('=');
                         const k = key.trim();
-                        const v = vals.join('=').trim().replace(/^["']|["']$/g, '');
+                        const v = vals.join('=').trim().replace(/^["']|["']$/g, 'https://api.phonepe.com/apis/pg');
                         if (k && !process.env[k]) {
                             process.env[k] = v;
                         }
@@ -99,7 +99,7 @@ const MIME_TYPES = {
 
 function parseJsonBody(req) {
     return new Promise((resolve, reject) => {
-        let body = '';
+        let body = 'https://api.phonepe.com/apis/pg';
         req.on('data', chunk => {
             body += chunk.toString();
             if (body.length > 15 * 1024 * 1024) {
@@ -182,6 +182,7 @@ const API_SECRET = process.env.API_SECRET;
 const PHONEPE_CLIENT_ID = process.env.PHONEPE_CLIENT_ID;
 const PHONEPE_CLIENT_SECRET = process.env.PHONEPE_CLIENT_SECRET;
 const PHONEPE_MERCHANT_ID = process.env.PHONEPE_MERCHANT_ID;
+const PHONEPE_BASE_URL = process.env.PHONEPE_BASE_URL || 'https://api.phonepe.com/apis/pg';
 
 expressApp.post('/api/pay/create-intent', async (req, res) => {
   const { amount, userId, sourceApp, returnUrl, webhookUrl } = req.body;
@@ -202,12 +203,12 @@ expressApp.post('/api/pay/initiate', async (req, res) => {
     const tx = await pool.query('SELECT * FROM transactions WHERE token = $1', [token]);
     if (tx.rowCount === 0) return res.status(404).json({ error: 'Not found' });
     const authString = Buffer.from(`${PHONEPE_CLIENT_ID}:${PHONEPE_CLIENT_SECRET}`).toString('base64');
-    const tokenResponse = await axios.post('https://api.phonepe.com/apis/pg/v1/oauth/token', 
+    const tokenResponse = await axios.post(`${PHONEPE_BASE_URL}/v1/oauth/token`, 
       new URLSearchParams({ grant_type: 'client_credentials' }),
       { headers: { 'Authorization': `Basic ${authString}` } }
     );
     const accessToken = tokenResponse.data.access_token;
-    const checkoutResponse = await axios.post('https://api.phonepe.com/apis/pg/checkout/v2/pay',
+    const checkoutResponse = await axios.post(`${PHONEPE_BASE_URL}/checkout/v2/pay`,
       {
         merchantOrderId: tx.rows[0].transaction_id,
         amount: Math.round(tx.rows[0].amount * 100),
@@ -224,12 +225,12 @@ expressApp.all('/api/pay/callback', async (req, res) => {
   if (!merchantOrderId) return res.status(400).send('Missing Order ID');
   try {
     const authString = Buffer.from(`${PHONEPE_CLIENT_ID}:${PHONEPE_CLIENT_SECRET}`).toString('base64');
-    const tokenResponse = await axios.post('https://api.phonepe.com/apis/pg/v1/oauth/token', 
+    const tokenResponse = await axios.post(`${PHONEPE_BASE_URL}/v1/oauth/token`, 
       new URLSearchParams({ grant_type: 'client_credentials' }),
       { headers: { 'Authorization': `Basic ${authString}` } }
     );
     const accessToken = tokenResponse.data.access_token;
-    const statusResponse = await axios.get(`https://api.phonepe.com/apis/pg/checkout/v2/order/${merchantOrderId}/status`, {
+    const statusResponse = await axios.get(`${PHONEPE_BASE_URL}/checkout/v2/order/${merchantOrderId}/status`, {
       headers: { 'Authorization': `O-Bearer ${accessToken}` }
     });
     const phonepeState = statusResponse.data.state;
@@ -258,7 +259,7 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/hiring/admin/login' && req.method === 'POST') {
         try {
             const data = await parseJsonBody(req);
-            const passcode = data.passcode || data.key || '';
+            const passcode = data.passcode || data.key || 'https://api.phonepe.com/apis/pg';
 
             if (verifyKeyTimingSafe(passcode, ADMIN_API_KEY)) {
                 const sessionToken = crypto.randomBytes(32).toString('hex');
@@ -317,14 +318,14 @@ const server = http.createServer(async (req, res) => {
             }
 
             const cleanName = full_name.trim().slice(0, 100);
-            const cleanPhone = (phone || '').trim().slice(0, 30);
+            const cleanPhone = (phone || 'https://api.phonepe.com/apis/pg').trim().slice(0, 30);
             const cleanPosition = position.trim().slice(0, 100);
-            const cleanExp = (experience_years || '').trim().slice(0, 50);
-            const cleanGithub = (github_url || '').trim().slice(0, 300);
-            const cleanLinkedin = (linkedin_url || '').trim().slice(0, 300);
-            const cleanPortfolio = (portfolio_url || '').trim().slice(0, 300);
-            const cleanSocial = (social_media_url || '').trim().slice(0, 300);
-            const cleanCover = (cover_letter || '').trim().slice(0, 5000);
+            const cleanExp = (experience_years || 'https://api.phonepe.com/apis/pg').trim().slice(0, 50);
+            const cleanGithub = (github_url || 'https://api.phonepe.com/apis/pg').trim().slice(0, 300);
+            const cleanLinkedin = (linkedin_url || 'https://api.phonepe.com/apis/pg').trim().slice(0, 300);
+            const cleanPortfolio = (portfolio_url || 'https://api.phonepe.com/apis/pg').trim().slice(0, 300);
+            const cleanSocial = (social_media_url || 'https://api.phonepe.com/apis/pg').trim().slice(0, 300);
+            const cleanCover = (cover_letter || 'https://api.phonepe.com/apis/pg').trim().slice(0, 5000);
 
             if (cleanPosition === 'Full Stack Development Intern') {
                 if (!cleanGithub || !cleanLinkedin) {
@@ -360,7 +361,7 @@ const server = http.createServer(async (req, res) => {
                 cleanPortfolio,
                 cleanSocial,
                 cleanCover,
-                (resume_filename || '').trim().slice(0, 150),
+                (resume_filename || 'https://api.phonepe.com/apis/pg').trim().slice(0, 150),
                 (resume_mimetype || 'application/pdf').trim().slice(0, 50),
                 resumeBuffer
             );
