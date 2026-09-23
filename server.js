@@ -1,10 +1,12 @@
 const http = require('http');
 const fs = require('fs');
+const express = require('express');
+const { Pool } = require('pg');
+const axios = require('axios');
 const path = require('path');
 const crypto = require('crypto');
 const { DatabaseSync } = require('node:sqlite');
 
-// Load environment variables from .env or .env.local if present
 function loadEnvFiles() {
     const files = ['.env', '.env.local', '.env.production'];
     files.forEach(filename => {
@@ -32,13 +34,10 @@ loadEnvFiles();
 const PORT = process.env.PORT || 8081;
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY || process.env.ADMIN_KEY || 'admin123';
 
-// Active cryptographically secure admin session tokens (token -> expireTimestamp)
 const activeAdminSessions = new Map();
 
-// Rate limiting tracker for public form submissions (IP -> { count, resetTime })
 const ipRateLimiter = new Map();
 
-// Clean up expired admin sessions every 30 minutes
 setInterval(() => {
     const now = Date.now();
     for (const [token, expireTime] of activeAdminSessions.entries()) {
@@ -48,17 +47,14 @@ setInterval(() => {
     }
 }, 30 * 60 * 1000);
 
-// Ensure data directory exists for SQLite database persistence
 const dataDir = path.join(__dirname, 'data');
 if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
 }
 
-// Initialize SQLite database
 const dbPath = path.join(dataDir, 'hiring.db');
 const db = new DatabaseSync(dbPath);
 
-// Create candidates table schema if not existing
 db.exec(`
     CREATE TABLE IF NOT EXISTS candidates (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -80,7 +76,6 @@ db.exec(`
     );
 `);
 
-// Alter table migrations for existing database files
 try { db.exec(`ALTER TABLE candidates ADD COLUMN github_url TEXT`); } catch (_) {}
 try { db.exec(`ALTER TABLE candidates ADD COLUMN linkedin_url TEXT`); } catch (_) {}
 try { db.exec(`ALTER TABLE candidates ADD COLUMN social_media_url TEXT`); } catch (_) {}
@@ -107,7 +102,7 @@ function parseJsonBody(req) {
         let body = '';
         req.on('data', chunk => {
             body += chunk.toString();
-            if (body.length > 15 * 1024 * 1024) { // 15MB max
+            if (body.length > 15 * 1024 * 1024) {
                 reject(new Error('Payload too large'));
             }
         });
@@ -131,7 +126,6 @@ function verifyKeyTimingSafe(inputKey, targetKey) {
 }
 
 function checkAdminAuth(req, urlObj) {
-    // 1. Check Bearer token in Authorization header
     const authHeader = req.headers['authorization'];
     if (authHeader && authHeader.startsWith('Bearer ')) {
         const token = authHeader.substring(7).trim();
@@ -141,7 +135,6 @@ function checkAdminAuth(req, urlObj) {
         }
     }
 
-    // 2. Check token in query param
     const queryToken = urlObj.searchParams.get('token');
     if (queryToken) {
         const expireTime = activeAdminSessions.get(queryToken);
@@ -150,7 +143,6 @@ function checkAdminAuth(req, urlObj) {
         }
     }
 
-    // 3. Fallback check for direct API Key header or query param
     const headerKey = req.headers['x-admin-key'];
     if (verifyKeyTimingSafe(headerKey, ADMIN_API_KEY)) return true;
 
@@ -163,8 +155,8 @@ function checkAdminAuth(req, urlObj) {
 function checkRateLimit(req) {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown_ip';
     const now = Date.now();
-    const windowMs = 15 * 60 * 1000; // 15 minute window
-    const maxRequests = 10; // Max 10 submissions per IP per 15 mins
+    const windowMs = 15 * 60 * 1000;
+    const maxRequests = 10;
 
     let record = ipRateLimiter.get(ip);
     if (!record || now > record.resetTime) {
@@ -181,7 +173,79 @@ function checkRateLimit(req) {
     return true;
 }
 
+const expressApp = express();
+expressApp.use(express.json());
+expressApp.use(express.urlencoded({ extended: true }));
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const API_SECRET = process.env.API_SECRET;
+const PHONEPE_CLIENT_ID = process.env.PHONEPE_CLIENT_ID;
+const PHONEPE_CLIENT_SECRET = process.env.PHONEPE_CLIENT_SECRET;
+const PHONEPE_MERCHANT_ID = process.env.PHONEPE_MERCHANT_ID;
+
+expressApp.post('/api/pay/create-intent', async (req, res) => {
+  const { amount, userId, sourceApp, returnUrl, webhookUrl } = req.body;
+  if (req.headers['x-api-secret'] !== API_SECRET) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const transactionId = crypto.randomUUID();
+    const result = await pool.query(
+      `INSERT INTO transactions (transaction_id, user_id, source_app, return_url, webhook_url, status, amount) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING token`,
+      [transactionId, userId, sourceApp, returnUrl, webhookUrl, 'PENDING', amount]
+    );
+    res.json({ checkout_token: result.rows[0].token });
+  } catch (err) { res.status(500).json({ error: 'Internal Server Error' }); }
+});
+
+expressApp.post('/api/pay/initiate', async (req, res) => {
+  const { token } = req.body;
+  try {
+    const tx = await pool.query('SELECT * FROM transactions WHERE token = $1', [token]);
+    if (tx.rowCount === 0) return res.status(404).json({ error: 'Not found' });
+    const authString = Buffer.from(`${PHONEPE_CLIENT_ID}:${PHONEPE_CLIENT_SECRET}`).toString('base64');
+    const tokenResponse = await axios.post('https://api.phonepe.com/apis/pg/v1/oauth/token', 
+      new URLSearchParams({ grant_type: 'client_credentials' }),
+      { headers: { 'Authorization': `Basic ${authString}` } }
+    );
+    const accessToken = tokenResponse.data.access_token;
+    const checkoutResponse = await axios.post('https://api.phonepe.com/apis/pg/checkout/v2/pay',
+      {
+        merchantOrderId: tx.rows[0].transaction_id,
+        amount: Math.round(tx.rows[0].amount * 100),
+        paymentFlow: { type: "PG_CHECKOUT", merchantUrls: { redirectUrl: `https://eduviskar.com/api/pay/callback` } }
+      },
+      { headers: { 'Authorization': `O-Bearer ${accessToken}`, 'Content-Type': 'application/json' } }
+    );
+    res.json({ url: checkoutResponse.data.redirectUrl });
+  } catch (err) { res.status(500).json({ error: 'Initiate Failed' }); }
+});
+
+expressApp.all('/api/pay/callback', async (req, res) => {
+  const merchantOrderId = req.query.merchantOrderId || req.body.merchantOrderId || req.query.transactionId || req.body.transactionId;
+  if (!merchantOrderId) return res.status(400).send('Missing Order ID');
+  try {
+    const authString = Buffer.from(`${PHONEPE_CLIENT_ID}:${PHONEPE_CLIENT_SECRET}`).toString('base64');
+    const tokenResponse = await axios.post('https://api.phonepe.com/apis/pg/v1/oauth/token', 
+      new URLSearchParams({ grant_type: 'client_credentials' }),
+      { headers: { 'Authorization': `Basic ${authString}` } }
+    );
+    const accessToken = tokenResponse.data.access_token;
+    const statusResponse = await axios.get(`https://api.phonepe.com/apis/pg/checkout/v2/order/${merchantOrderId}/status`, {
+      headers: { 'Authorization': `O-Bearer ${accessToken}` }
+    });
+    const phonepeState = statusResponse.data.state;
+    const finalStatus = phonepeState === 'COMPLETED' ? 'SUCCESS' : 'FAILED';
+    const tx = await pool.query('UPDATE transactions SET status = $1 WHERE transaction_id = $2 RETURNING *', [finalStatus, merchantOrderId]);
+    if (tx.rowCount === 0) return res.status(400).send('Transaction not found');
+    await axios.post(tx.rows[0].webhook_url, { transactionId: merchantOrderId, status: finalStatus, userId: tx.rows[0].user_id, amount: tx.rows[0].amount }, { headers: { 'x-api-secret': API_SECRET } });
+    res.redirect(`${tx.rows[0].return_url}?status=${finalStatus}&txnId=${merchantOrderId}`);
+  } catch (err) { res.status(500).send('Callback Verification Error'); }
+});
+
 const server = http.createServer(async (req, res) => {
+    if (req.url.startsWith('/api/pay')) {
+        return expressApp(req, res);
+    }
+
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
     res.setHeader('X-XSS-Protection', '1; mode=block');
@@ -190,9 +254,7 @@ const server = http.createServer(async (req, res) => {
     const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     const pathname = urlObj.pathname;
 
-    // --- API ROUTES ---
 
-    // Admin Login Endpoint (returns secure session token)
     if (pathname === '/api/hiring/admin/login' && req.method === 'POST') {
         try {
             const data = await parseJsonBody(req);
@@ -200,7 +262,7 @@ const server = http.createServer(async (req, res) => {
 
             if (verifyKeyTimingSafe(passcode, ADMIN_API_KEY)) {
                 const sessionToken = crypto.randomBytes(32).toString('hex');
-                const expiresAt = Date.now() + (12 * 60 * 60 * 1000); // 12 hours valid
+                const expiresAt = Date.now() + (12 * 60 * 60 * 1000);
                 activeAdminSessions.set(sessionToken, expiresAt);
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -219,7 +281,6 @@ const server = http.createServer(async (req, res) => {
         }
     }
 
-    // 1. Submit candidate job application
     if (pathname === '/api/hiring/apply' && req.method === 'POST') {
         if (!checkRateLimit(req)) {
             res.writeHead(429, { 'Content-Type': 'application/json' });
@@ -249,7 +310,6 @@ const server = http.createServer(async (req, res) => {
                 return res.end(JSON.stringify({ success: false, error: 'Full name, email, and position are required fields.' }));
             }
 
-            // Input Validation & Length Constraints
             const cleanEmail = email.trim();
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -266,7 +326,6 @@ const server = http.createServer(async (req, res) => {
             const cleanSocial = (social_media_url || '').trim().slice(0, 300);
             const cleanCover = (cover_letter || '').trim().slice(0, 5000);
 
-            // Role-specific validation
             if (cleanPosition === 'Full Stack Development Intern') {
                 if (!cleanGithub || !cleanLinkedin) {
                     res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -315,7 +374,6 @@ const server = http.createServer(async (req, res) => {
         }
     }
 
-    // 2. Fetch list of candidates (Admin protected)
     if (pathname === '/api/hiring/applications' && req.method === 'GET') {
         if (!checkAdminAuth(req, urlObj)) {
             res.writeHead(401, { 'Content-Type': 'application/json' });
@@ -342,7 +400,6 @@ const server = http.createServer(async (req, res) => {
         }
     }
 
-    // 3. Download stored candidate resume BLOB (Admin protected)
     if (pathname.match(/^\/api\/hiring\/applications\/\d+\/resume$/) && req.method === 'GET') {
         if (!checkAdminAuth(req, urlObj)) {
             res.writeHead(401, { 'Content-Type': 'application/json' });
@@ -375,7 +432,6 @@ const server = http.createServer(async (req, res) => {
         }
     }
 
-    // 4. Delete candidate application (Admin protected)
     if (pathname.match(/^\/api\/hiring\/applications\/\d+$/) && req.method === 'DELETE') {
         if (!checkAdminAuth(req, urlObj)) {
             res.writeHead(401, { 'Content-Type': 'application/json' });
@@ -395,7 +451,6 @@ const server = http.createServer(async (req, res) => {
         }
     }
 
-    // --- SEO 301 REDIRECTS FOR LEGACY / ALIAS ROUTES ---
     if (pathname === '/legal') {
         const tab = urlObj.searchParams.get('tab');
         const redirectTarget = tab === 'privacy' ? '/privacy' : '/terms';
@@ -408,14 +463,12 @@ const server = http.createServer(async (req, res) => {
         return res.end();
     }
 
-    // Redirect requests ending with .html to clean extensionless canonical URLs
     if (pathname.endsWith('.html') && pathname !== '/admin-hiring.html') {
         const cleanPath = pathname === '/index.html' ? '/' : pathname.slice(0, -5);
         res.writeHead(301, { 'Location': cleanPath + urlObj.search, 'Cache-Control': 'public, max-age=31536000' });
         return res.end();
     }
 
-    // --- STATIC FILE SERVING ---
 
     let requestPath = pathname;
 
@@ -429,7 +482,6 @@ const server = http.createServer(async (req, res) => {
 
     const absolutePath = path.join(__dirname, requestPath);
 
-    // Security check: prevent directory traversal
     if (!absolutePath.startsWith(__dirname)) {
         res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
         return res.end('403 Forbidden');
@@ -438,7 +490,6 @@ const server = http.createServer(async (req, res) => {
     const ext = path.extname(absolutePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
-    // Prevent search engine crawlers from indexing fonts, JSON files, API routes, legacy Next.js assets, and admin portal
     if (
         pathname.startsWith('/_next/') ||
         pathname.startsWith('/api/') ||

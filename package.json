@@ -24,5 +24,10 @@
   "bugs": {
     "url": "https://github.com/Satwik-Kar/EduvisKar-Technologies/issues"
   },
-  "homepage": "https://github.com/Satwik-Kar/EduvisKar-Technologies#readme"
+  "homepage": "https://github.com/Satwik-Kar/EduvisKar-Technologies#readme",
+  "dependencies": {
+    "axios": "^1.20.0",
+    "express": "^5.2.1",
+    "pg": "^8.23.0"
+  }
 }
