@@ -172,6 +172,21 @@ services:
     mem_limit: 50m
     mem_reservation: 20m
 
+  postgres:
+    image: postgres:15-alpine
+    container_name: eduviskar_gateway_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: eduviskar
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: et_db
+    volumes:
+      - gateway_postgres_data:/var/lib/postgresql/data
+    networks:
+      - eduviskar_net
+    mem_limit: 128m
+    mem_reservation: 64m
+
 networks:
   eduviskar_net:
     driver: bridge
@@ -179,3 +194,5 @@ networks:
 volumes:
   redis_data:
   tech_hiring_data:
+  gateway_postgres_data:
+

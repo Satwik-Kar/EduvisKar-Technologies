@@ -115,9 +115,15 @@ else
     write_ok "Using existing server configs on Server 1."
 fi
 write_step "Phase 5: Executing Remote SSH Deployment..."
-ssh -i "$SSH_KEY" -o "StrictHostKeyChecking=no" "${SSH_USER}@${SERVER_IP}" "cd $DEPLOY_PATH && docker compose pull eduviskar_main && docker compose up -d eduviskar_main nginx && docker image prune -f && docker compose restart nginx" || write_fatal "Failed SSH deployment"
+ssh -i "$SSH_KEY" -o "StrictHostKeyChecking=no" "${SSH_USER}@${SERVER_IP}" "cd $DEPLOY_PATH && docker compose pull eduviskar_main && docker compose up -d postgres eduviskar_main nginx && docker image prune -f && docker compose restart nginx" || write_fatal "Failed SSH deployment"
+
+write_step "Phase 5.5: Provisioning Gateway Database on Server 1..."
+DB_SETUP_CMD="docker exec eduviskar_gateway_postgres psql -U eduviskar -d et_db -c \"CREATE EXTENSION IF NOT EXISTS \\\"pgcrypto\\\"; CREATE TABLE IF NOT EXISTS gateway_payment_intents (     token UUID PRIMARY KEY DEFAULT gen_random_uuid(),     transaction_id VARCHAR(255) NOT NULL,     user_id VARCHAR(255) NOT NULL,     source_app VARCHAR(255) NOT NULL,     return_url TEXT NOT NULL,     webhook_url TEXT NOT NULL,     amount NUMERIC(10,2) NOT NULL,     status VARCHAR(50) DEFAULT 'PENDING',     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP );\""
+sleep 10
+ssh -i "$SSH_KEY" -o "StrictHostKeyChecking=no" "${SSH_USER}@${SERVER_IP}" "$DB_SETUP_CMD" || write_warn "Failed to create database tables (they might already exist)."
+
 write_step "Phase 6: Server Health Check"
-sleep 5
+sleep 10
 if ssh -i "$SSH_KEY" -o "StrictHostKeyChecking=no" "${SSH_USER}@${SERVER_IP}" "docker exec eduviskar_main node -e \"require('http').get('http://localhost:8081', (r) => process.exit(r.statusCode === 200 ? 0 : 1))\""; then
     write_ok "Health check passed! Main hub container (eduviskar_main) responding with 200 OK."
 else

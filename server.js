@@ -171,7 +171,11 @@ const expressApp = express();
 expressApp.use(express.json()); expressApp.use(express.urlencoded({ extended: true }));
 expressApp.use(express.urlencoded({ extended: true }));
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+const poolConfig = { connectionString: process.env.DATABASE_URL };
+if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('supabase')) {
+  poolConfig.ssl = { rejectUnauthorized: false };
+}
+const pool = new Pool(poolConfig);
 const API_SECRET = process.env.API_SECRET;
 const PHONEPE_CLIENT_ID = process.env.PHONEPE_CLIENT_ID;
 const PHONEPE_CLIENT_SECRET = process.env.PHONEPE_CLIENT_SECRET;
