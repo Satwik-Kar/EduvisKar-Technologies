@@ -168,10 +168,10 @@ function checkRateLimit(req) {
 }
 
 const expressApp = express();
-expressApp.use(express.json());
+expressApp.use(express.json()); expressApp.use(express.urlencoded({ extended: true }));
 expressApp.use(express.urlencoded({ extended: true }));
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
 const API_SECRET = process.env.API_SECRET;
 const PHONEPE_CLIENT_ID = process.env.PHONEPE_CLIENT_ID;
 const PHONEPE_CLIENT_SECRET = process.env.PHONEPE_CLIENT_SECRET;
@@ -184,44 +184,46 @@ expressApp.post('/api/pay/create-intent', async (req, res) => {
   try {
     const transactionId = crypto.randomUUID();
     const result = await pool.query(
-      `INSERT INTO transactions (transaction_id, user_id, source_app, return_url, webhook_url, status, amount) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING token`,
+      `INSERT INTO gateway_payment_intents (transaction_id, user_id, source_app, return_url, webhook_url, status, amount) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING token`,
       [transactionId, userId, sourceApp, returnUrl, webhookUrl, 'PENDING', amount]
     );
     res.json({ checkout_token: result.rows[0].token });
-  } catch (err) { res.status(500).json({ error: 'Internal Server Error' }); }
+  } catch (err) { console.error("DB_ERR:", err.message); res.status(500).json({ error: 'Internal Server Error' }); }
 });
 
 expressApp.post('/api/pay/initiate', async (req, res) => {
   const { token } = req.body;
   try {
-    const tx = await pool.query('SELECT * FROM transactions WHERE token = $1', [token]);
+    const tx = await pool.query('SELECT * FROM gateway_payment_intents WHERE token = $1', [token]);
     if (tx.rowCount === 0) return res.status(404).json({ error: 'Not found' });
-    const authString = Buffer.from(`${PHONEPE_CLIENT_ID}:${PHONEPE_CLIENT_SECRET}`).toString('base64');
-    const tokenResponse = await axios.post(`${PHONEPE_BASE_URL}/v1/oauth/token`, 
-      new URLSearchParams({ grant_type: 'client_credentials' }),
-      { headers: { 'Authorization': `Basic ${authString}` } }
+    const params = new URLSearchParams(); params.append('client_id', PHONEPE_CLIENT_ID); params.append('client_secret', PHONEPE_CLIENT_SECRET); params.append('client_version', '1'); params.append('grant_type', 'client_credentials');
+    const oauthBase = PHONEPE_BASE_URL.includes('sandbox') ? PHONEPE_BASE_URL : 'https://api.phonepe.com/apis/identity-manager';
+    const tokenResponse = await axios.post(`${oauthBase}/v1/oauth/token`, 
+      params,
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
     );
     const accessToken = tokenResponse.data.access_token;
     const checkoutResponse = await axios.post(`${PHONEPE_BASE_URL}/checkout/v2/pay`,
       {
         merchantOrderId: tx.rows[0].transaction_id,
         amount: Math.round(tx.rows[0].amount * 100),
-        paymentFlow: { type: "PG_CHECKOUT", merchantUrls: { redirectUrl: `https://eduviskar.com/api/pay/callback` } }
+        paymentFlow: { type: "PG_CHECKOUT", merchantUrls: { redirectUrl: `https://eduviskar.com/api/pay/callback?merchantOrderId=${tx.rows[0].transaction_id}` } }
       },
       { headers: { 'Authorization': `O-Bearer ${accessToken}`, 'Content-Type': 'application/json' } }
     );
     res.json({ url: checkoutResponse.data.redirectUrl });
-  } catch (err) { res.status(500).json({ error: 'Initiate Failed' }); }
+  } catch (err) { console.error("INITIATE_ERR:", err.response ? err.response.data : err.message); res.status(500).json({ error: 'Initiate Failed' }); }
 });
 
 expressApp.all('/api/pay/callback', async (req, res) => {
-  const merchantOrderId = req.query.merchantOrderId || req.body.merchantOrderId || req.query.transactionId || req.body.transactionId;
-  if (!merchantOrderId) return res.status(400).send('Missing Order ID');
+  const body = req.body || {}; const query = req.query || {}; const merchantOrderId = query.merchantOrderId || body.merchantOrderId || query.transactionId || body.transactionId;
+  if (!merchantOrderId) return res.status(400).send('Missing Order ID. DEBUG: ' + JSON.stringify({ body, query }));
   try {
-    const authString = Buffer.from(`${PHONEPE_CLIENT_ID}:${PHONEPE_CLIENT_SECRET}`).toString('base64');
-    const tokenResponse = await axios.post(`${PHONEPE_BASE_URL}/v1/oauth/token`, 
-      new URLSearchParams({ grant_type: 'client_credentials' }),
-      { headers: { 'Authorization': `Basic ${authString}` } }
+    const params = new URLSearchParams(); params.append('client_id', PHONEPE_CLIENT_ID); params.append('client_secret', PHONEPE_CLIENT_SECRET); params.append('client_version', '1'); params.append('grant_type', 'client_credentials');
+    const oauthBase = PHONEPE_BASE_URL.includes('sandbox') ? PHONEPE_BASE_URL : 'https://api.phonepe.com/apis/identity-manager';
+    const tokenResponse = await axios.post(`${oauthBase}/v1/oauth/token`, 
+      params,
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
     );
     const accessToken = tokenResponse.data.access_token;
     const statusResponse = await axios.get(`${PHONEPE_BASE_URL}/checkout/v2/order/${merchantOrderId}/status`, {
@@ -229,13 +231,57 @@ expressApp.all('/api/pay/callback', async (req, res) => {
     });
     const phonepeState = statusResponse.data.state;
     const finalStatus = phonepeState === 'COMPLETED' ? 'SUCCESS' : 'FAILED';
-    const tx = await pool.query('UPDATE transactions SET status = $1 WHERE transaction_id = $2 RETURNING *', [finalStatus, merchantOrderId]);
+    const tx = await pool.query('UPDATE gateway_payment_intents SET status = $1 WHERE transaction_id = $2 RETURNING *', [finalStatus, merchantOrderId]);
     if (tx.rowCount === 0) return res.status(400).send('Transaction not found');
     await axios.post(tx.rows[0].webhook_url, { transactionId: merchantOrderId, status: finalStatus, userId: tx.rows[0].user_id, amount: tx.rows[0].amount }, { headers: { 'x-api-secret': API_SECRET } });
     
     const delimiter = tx.rows[0].return_url.includes('?') ? '&' : '?';
     res.redirect(`${tx.rows[0].return_url}${delimiter}status=${finalStatus}&txnId=${merchantOrderId}`);
   } catch (err) { res.status(500).send('Callback Verification Error'); }
+});
+
+
+
+expressApp.post('/api/pay/webhook', async (req, res) => {
+  try {
+    let payloadData;
+    if (req.body && req.body.response) {
+      const decoded = Buffer.from(req.body.response, 'base64').toString('utf8');
+      const parsed = JSON.parse(decoded);
+      payloadData = parsed.data || parsed;
+    } else {
+      payloadData = req.body.data || req.body;
+    }
+
+    if (!payloadData || !payloadData.merchantTransactionId) {
+      return res.status(200).send('OK');
+    }
+
+    const merchantOrderId = payloadData.merchantTransactionId;
+    // ZERO-TRUST SECURITY: Never trust the webhook payload. Ask PhonePe directly.
+    const params = new URLSearchParams(); params.append('client_id', PHONEPE_CLIENT_ID); params.append('client_secret', PHONEPE_CLIENT_SECRET); params.append('client_version', '1'); params.append('grant_type', 'client_credentials');
+    const oauthBase = PHONEPE_BASE_URL.includes('sandbox') ? PHONEPE_BASE_URL : 'https://api.phonepe.com/apis/identity-manager';
+    const tokenResponse = await axios.post(`${oauthBase}/v1/oauth/token`, params, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+    const accessToken = tokenResponse.data.access_token;
+    const statusResponse = await axios.get(`${PHONEPE_BASE_URL}/checkout/v2/order/${merchantOrderId}/status`, { headers: { 'Authorization': `O-Bearer ${accessToken}` } });
+    const phonepeState = statusResponse.data.state;
+    const finalStatus = phonepeState === 'COMPLETED' ? 'SUCCESS' : 'FAILED';
+
+    const tx = await pool.query('UPDATE gateway_payment_intents SET status =  WHERE transaction_id =  RETURNING *', [finalStatus, merchantOrderId]);
+    
+    if (tx.rowCount > 0 && tx.rows[0].webhook_url) {
+      await axios.post(tx.rows[0].webhook_url, { 
+        transactionId: merchantOrderId, 
+        status: finalStatus, 
+        userId: tx.rows[0].user_id, 
+        amount: tx.rows[0].amount 
+      }, { headers: { 'x-api-secret': API_SECRET } }).catch(e => console.error('WEBHOOK_FORWARD_ERR:', e.message));
+    }
+    res.status(200).send('OK');
+  } catch (err) {
+    console.error('WEBHOOK_ERR:', err.message);
+    res.status(200).send('OK');
+  }
 });
 
 const server = http.createServer(async (req, res) => {

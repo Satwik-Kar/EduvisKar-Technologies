@@ -3,6 +3,8 @@ services:
     image: ${IMAGE_MAIN:-eduviskar/main:latest}
     container_name: eduviskar_main
     restart: unless-stopped
+    env_file:
+      - ./domains/eduviskar.com/.env.production
     environment:
       NODE_ENV: production
       PORT: 8081

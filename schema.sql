@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-CREATE TABLE IF NOT EXISTS transactions (
+CREATE TABLE IF NOT EXISTS gateway_payment_intents (
     token UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     transaction_id VARCHAR(255) NOT NULL,
     user_id VARCHAR(255) NOT NULL,
