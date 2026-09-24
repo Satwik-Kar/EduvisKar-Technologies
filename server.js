@@ -233,11 +233,11 @@ expressApp.all('/api/pay/callback', async (req, res) => {
     const finalStatus = phonepeState === 'COMPLETED' ? 'SUCCESS' : 'FAILED';
     const tx = await pool.query('UPDATE gateway_payment_intents SET status = $1 WHERE transaction_id = $2 RETURNING *', [finalStatus, merchantOrderId]);
     if (tx.rowCount === 0) return res.status(400).send('Transaction not found');
-    await axios.post(tx.rows[0].webhook_url, { transactionId: merchantOrderId, status: finalStatus, userId: tx.rows[0].user_id, amount: tx.rows[0].amount }, { headers: { 'x-api-secret': API_SECRET } });
+    await axios.post(tx.rows[0].webhook_url, { transactionId: merchantOrderId, status: finalStatus, userId: tx.rows[0].user_id, amount: parseFloat(tx.rows[0].amount) }, { headers: { 'x-api-secret': API_SECRET } });
     
     const delimiter = tx.rows[0].return_url.includes('?') ? '&' : '?';
     res.redirect(`${tx.rows[0].return_url}${delimiter}status=${finalStatus}&txnId=${merchantOrderId}`);
-  } catch (err) { res.status(500).send('Callback Verification Error'); }
+  } catch (err) { console.error("CALLBACK_ERR:", err.response ? err.response.data : err.message); res.status(500).send("Callback Verification Error: " + (err.response ? JSON.stringify(err.response.data) : err.message)); }
 });
 
 
@@ -274,7 +274,7 @@ expressApp.post('/api/pay/webhook', async (req, res) => {
         transactionId: merchantOrderId, 
         status: finalStatus, 
         userId: tx.rows[0].user_id, 
-        amount: tx.rows[0].amount 
+        amount: parseFloat(tx.rows[0].amount) 
       }, { headers: { 'x-api-secret': API_SECRET } }).catch(e => console.error('WEBHOOK_FORWARD_ERR:', e.message));
     }
     res.status(200).send('OK');
